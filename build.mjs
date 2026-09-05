@@ -12,6 +12,7 @@ import { salaryPage, indexPage, takeHomePage } from "./src/render.mjs";
 import { homePage } from "./src/home_page.mjs";
 import { mortgagePage } from "./src/mortgage_page.mjs";
 import { comparePage, compareIndexPage } from "./src/compare_page.mjs";
+import { aboutPage, privacyPage, termsPage, notFoundPage } from "./src/legal_pages.mjs";
 import { CODES, country } from "./src/compare.mjs";
 import { fetchRates, rate as fxRate } from "./src/fx.mjs";
 import { COUNTRIES } from "./src/compare.mjs";
@@ -76,7 +77,7 @@ async function buildComparisons(fx) {
       await mkdir(hub, { recursive: true });
       await writeFile(new URL("index.html", hub), comparePage({
         gross: ladder[Math.floor(ladder.length / 2)], from, to,
-        rate: r, fxDate: fx.date, neighbours: ladder,
+        rate: r, fxDate: fx.date, neighbours: ladder, isHub: true,
       }));
     }
   }
@@ -141,6 +142,13 @@ async function main() {
   await mkdir(out("/mortgage"), { recursive: true });
   await writeFile(out("/mortgage/index.html"), mortgagePage());
 
+  await writeFile(out("/404.html"), notFoundPage());
+
+  for (const [path, render] of [["/about", aboutPage], ["/privacy", privacyPage], ["/terms", termsPage]]) {
+    await mkdir(out(path), { recursive: true });
+    await writeFile(out(`${path}/index.html`), render());
+  }
+
   const pairs = await buildComparisons(fx);
 
   for (const [i, salary] of salaries.entries()) {
@@ -154,6 +162,7 @@ async function main() {
 
   const urls = [
     "/", "/take-home/", "/mortgage/", "/compare/", ...compareUrls,
+    "/about/", "/privacy/", "/terms/",
     "/salaries/", ...salaries.map((s) => `/salary/${s}/`),
   ];
 

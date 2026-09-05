@@ -60,7 +60,7 @@ function sideBySide(c) {
   </div>`;
 }
 
-export function comparePage({ gross, from, to, rate, fxDate, neighbours = [] }) {
+export function comparePage({ gross, from, to, rate, fxDate, neighbours = [], isHub = false }) {
   const c = compare({ gross, from, to, rate });
   const a = country(from).meta;
   const b = country(to).meta;
@@ -106,9 +106,13 @@ ${sideBySide(c)}
 </article>`;
 
   return shell({
-    title: `${fmt(gross, a)} in ${a.name} vs ${b.name} — Salary Comparison`,
-    description: `To match ${fmt(gross, a)} in ${a.name} you need ${fmt(c.to.gross, b)} in ${b.name} after tax. Full side-by-side breakdown with sources.`,
-    canonical: url(`/compare/${slug}/${gross}/`),
+    title: isHub
+      ? `${a.cities[0]} vs ${b.cities[0]} — Salary Comparison After Tax`
+      : `${fmt(gross, a)} in ${a.name} vs ${b.name} — Salary Comparison`,
+    description: isHub
+      ? `Compare take-home pay between ${a.cities[0]} and ${b.cities[0]} at every salary. ${fmt(gross, a)} in ${a.cities[0]} needs ${fmt(c.to.gross, b)} in ${b.cities[0]} to match, after tax.`
+      : `To match ${fmt(gross, a)} in ${a.name} you need ${fmt(c.to.gross, b)} in ${b.name} after tax. Full side-by-side breakdown with sources.`,
+    canonical: url(isHub ? `/compare/${slug}/` : `/compare/${slug}/${gross}/`),
     body,
     script: " ",
     jsonLd: {

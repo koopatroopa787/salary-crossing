@@ -519,3 +519,7 @@
     .card { transition: none; }
     .card:hover { transform: none; }
   }
+
+  .legal-links { display: flex; gap: 18px; }
+  .legal-links a { color: var(--muted); }
+  .legal-links a:hover { color: var(--ink); }

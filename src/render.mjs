@@ -8,10 +8,10 @@
  */
 import { takeHome, money } from "./tax.mjs";
 import { YEAR_LABEL, YEAR_RANGE, REGIONS, PERSONAL_ALLOWANCE } from "./rates.mjs";
-import { BASE, SITE_NAME, CONTACT, AUTHOR, url } from "./site.mjs";
+import { BASE, SITE_NAME, CONTACT, AUTHOR, url, ORIGIN } from "./site.mjs";
 import { assets } from "./assets.mjs";
 
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) =>
+export const esc = (s) => String(s).replace(/[&<>"]/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 const FONTS = "https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500"
@@ -30,6 +30,15 @@ export function shell({ title, description, canonical, body, jsonLd, script }) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS}">
 <link rel="stylesheet" href="${BASE}${assets.style}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="${esc(SITE_NAME)}">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(description)}">
+<meta property="og:url" content="${canonical}">
+<meta property="og:image" content="${ORIGIN}${BASE}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 ${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>` : ""}
 </head>
 <body>
@@ -47,6 +56,7 @@ ${body}
   <p>Rates for ${YEAR_LABEL} (${YEAR_RANGE}) checked against <a href="https://www.gov.uk/income-tax-rates">gov.uk income tax rates</a>, <a href="https://www.gov.uk/scottish-income-tax">Scottish income tax</a>, <a href="https://www.gov.uk/national-insurance-rates-letters">National Insurance rates</a> and <a href="https://www.gov.uk/repaying-your-student-loan/what-you-pay">student loan repayment</a>.</p>
   ${AUTHOR.name ? `<p>Written and maintained by ${esc(AUTHOR.name)}. ${esc(AUTHOR.bio)}</p>` : ""}
   <p>Questions or a figure that looks wrong: <a href="mailto:${CONTACT}">${CONTACT}</a></p>
+  <p class="legal-links"><a href="${BASE}/about/">About</a> <a href="${BASE}/privacy/">Privacy</a> <a href="${BASE}/terms/">Terms</a></p>
 </footer>
 </div>
 ${script ?? calculatorScript()}

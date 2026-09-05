@@ -1,0 +1,521 @@
+  :root {
+    color-scheme: light;
+    --paper:  #EFF2F3;
+    --card:   #FFFFFF;
+    --sunk:   #F6F8F8;
+    --ink:    #0E1619;
+    --muted:  #5B6C74;
+    --rule:   #D6DDE0;
+    --rule-2: #B9C4C9;
+    --keep:   #0C5A4A;
+    --keep-bg:#E4EFEB;
+    --gone:   #9C3A20;
+    --focus:  #B96A12;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper:  #0C1214;
+      --card:   #141D20;
+      --sunk:   #101819;
+      --ink:    #E6EDEF;
+      --muted:  #8DA1A8;
+      --rule:   #24312F;
+      --rule-2: #35443F;
+      --keep:   #6FBFA5;
+      --keep-bg:#152722;
+      --gone:   #E08464;
+      --focus:  #E5A24A;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper:  #0C1214;
+    --card:   #141D20;
+    --sunk:   #101819;
+    --ink:    #E6EDEF;
+    --muted:  #8DA1A8;
+    --rule:   #24312F;
+    --rule-2: #35443F;
+    --keep:   #6FBFA5;
+    --keep-bg:#152722;
+    --gone:   #E08464;
+    --focus:  #E5A24A;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { max-width: 1020px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  /* ── masthead ─────────────────────────────────────────── */
+  .masthead { margin-bottom: 26px; }
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  h1 {
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(34px, 5.5vw, 52px);
+    line-height: 1.04;
+    letter-spacing: -0.012em;
+    margin: 0 0 10px;
+    text-wrap: balance;
+  }
+  h1 em { font-style: italic; color: var(--keep); }
+  .standfirst {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--muted);
+    font-size: 17px;
+  }
+
+  /* ── the working area ─────────────────────────────────── */
+  .work {
+    display: grid;
+    grid-template-columns: minmax(280px, 5fr) 7fr;
+    gap: 22px;
+    align-items: start;
+    margin-top: 28px;
+  }
+  @media (max-width: 800px) { .work { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+
+  form { padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  label, legend {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .01em;
+  }
+  .hint { font-size: 12.5px; color: var(--muted); }
+
+  .money-input { position: relative; display: flex; align-items: center; }
+  .money-input span {
+    position: absolute; left: 12px;
+    font-family: "IBM Plex Mono", monospace;
+    color: var(--muted);
+    pointer-events: none;
+  }
+  input[type="number"], select {
+    width: 100%;
+    font: 500 17px/1 "IBM Plex Mono", ui-monospace, monospace;
+    padding: 11px 12px;
+    background: var(--sunk);
+    color: var(--ink);
+    border: 1px solid var(--rule-2);
+    border-radius: 3px;
+  }
+  input[type="number"] { padding-left: 26px; }
+  select { font-family: "Public Sans", sans-serif; font-size: 14.5px; }
+
+  fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .checks { display: flex; flex-wrap: wrap; gap: 6px; }
+  .check {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px;
+    padding: 6px 10px;
+    border: 1px solid var(--rule-2);
+    border-radius: 999px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .check:has(input:checked) {
+    background: var(--keep-bg);
+    border-color: var(--keep);
+    color: var(--keep);
+    font-weight: 600;
+  }
+  .check input { accent-color: var(--keep); margin: 0; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  :is(input, select, button, .check):focus-visible,
+  .check:has(input:focus-visible) {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* ── the payslip ──────────────────────────────────────── */
+  .slip { padding: 0; overflow: hidden; }
+
+  .headline {
+    padding: 24px 24px 20px;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 18px;
+  }
+  .headline .big {
+    font-family: "Newsreader", Georgia, serif;
+    font-size: clamp(44px, 9vw, 68px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--keep);
+    font-variant-numeric: tabular-nums;
+  }
+  .headline .unit { font-size: 14px; color: var(--muted); }
+  .headline .annual {
+    margin-left: auto;
+    text-align: right;
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+  .headline .annual b {
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 17px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  th { text-align: left; font-weight: 600; }
+  td, th { padding: 10px 24px; border-bottom: 1px solid var(--rule); }
+  td.num, th.num {
+    text-align: right;
+    font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  tr.deduct td.num { color: var(--gone); }
+  tr.deduct td.num::before { content: "−"; margin-right: 1px; }
+  tr.sub td { color: var(--muted); font-size: 13px; padding-top: 3px; padding-bottom: 3px; border-bottom: 0; }
+  tr.sub td:first-child { padding-left: 40px; }
+  tr.total td {
+    border-top: 2px solid var(--ink);
+    border-bottom: 0;
+    font-weight: 700;
+    font-size: 16px;
+    padding-top: 14px;
+  }
+  tr.total td.num { color: var(--keep); }
+  caption {
+    caption-side: top;
+    text-align: left;
+    padding: 14px 24px 4px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .rates {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--rule);
+  }
+  .rates div { padding: 16px 24px; }
+  .rates div + div { border-left: 1px solid var(--rule); }
+  .rates dt {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 3px;
+  }
+  .rates dd {
+    margin: 0;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 22px;
+    font-variant-numeric: tabular-nums;
+  }
+  .rates .warn { color: var(--gone); }
+  .rates small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.4; font-family: "Public Sans", sans-serif; }
+
+  /* ── prose ────────────────────────────────────────────── */
+  article { margin-top: 48px; max-width: 66ch; }
+  article h2 {
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 400;
+    font-size: 27px;
+    margin: 36px 0 10px;
+    letter-spacing: -0.01em;
+  }
+  article h2:first-child { margin-top: 0; }
+  article p { margin: 0 0 14px; }
+  article ul { margin: 0 0 14px; padding-left: 20px; }
+  article li { margin-bottom: 6px; }
+  article strong { font-weight: 600; }
+  .figure {
+    font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    background: var(--sunk);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.92em;
+  }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 66ch;
+  }
+  footer a { color: var(--keep); }
+
+  /* ── salary pages ─────────────────────────────────────── */
+  .crumb {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: .06em;
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+  .crumb a { color: var(--muted); }
+
+  .verdict {
+    font-size: 19px;
+    line-height: 1.5;
+    max-width: 62ch;
+    margin: 0 0 6px;
+  }
+  .verdict b { font-weight: 700; color: var(--keep); }
+
+  .raise {
+    margin-top: 30px;
+    border: 1px solid var(--rule);
+    background: var(--card);
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  .raise table { font-size: 14px; }
+  .raise td, .raise th { white-space: nowrap; }
+  .raise tr.here { background: var(--keep-bg); }
+  .raise tr.here td, .raise tr.here th { font-weight: 700; }
+  .raise td.keep { color: var(--keep); }
+
+  .neighbours {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+    list-style: none;
+    padding: 0;
+  }
+  .neighbours a {
+    display: inline-block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    padding: 7px 11px;
+    border: 1px solid var(--rule-2);
+    border-radius: 3px;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--card);
+  }
+  .neighbours a:hover { border-color: var(--keep); color: var(--keep); }
+
+  nav.top {
+    display: flex;
+    gap: 18px;
+    align-items: baseline;
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 14px;
+  }
+  nav.top a { color: var(--muted); text-decoration: none; }
+  nav.top a:hover { color: var(--ink); }
+  nav.top .brand {
+    font-family: "Newsreader", Georgia, serif;
+    font-size: 20px;
+    color: var(--ink);
+    margin-right: auto;
+  }
+
+  /* ── homepage ─────────────────────────────────────────────
+     Low visual complexity is the single strongest driver of the 50ms first
+     impression, so the top of this page is one headline, one control strip
+     and one number. Everything with a border or a fill below is deliberately
+     quieter than the answer. */
+
+  /* No width cap on the block: the headline sets its own measure in ch of its
+     own size, which is ~14 words at the display size and ~6 on a phone. */
+  .hero { margin: 8px 0 28px; }
+  .hero h1 {
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(36px, 6.2vw, 60px);
+    line-height: 1.03;
+    letter-spacing: -0.021em;
+    margin: 0 0 12px;
+    text-wrap: balance;
+    max-width: 15ch;
+  }
+  .hero h1 em { font-style: italic; color: var(--keep); }
+  .hero .standfirst { max-width: 58ch; font-size: 16.5px; }
+
+  .engine {
+    display: grid;
+    grid-template-columns: minmax(260px, 4fr) 6fr;
+    gap: 0;
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    background: var(--card);
+    overflow: hidden;
+  }
+  @media (max-width: 760px) { .engine { grid-template-columns: 1fr; } }
+
+  .controls {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-right: 1px solid var(--rule);
+    background: var(--sunk);
+  }
+  @media (max-width: 760px) { .controls { border-right: 0; border-bottom: 1px solid var(--rule); } }
+
+  .ctl { display: flex; flex-direction: column; gap: 5px; }
+  .ctl label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .money { position: relative; display: flex; align-items: center; }
+  .money span {
+    position: absolute; left: 12px;
+    font-family: "IBM Plex Mono", monospace;
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .controls input[type="number"] {
+    width: 100%;
+    font: 500 19px/1 "IBM Plex Mono", ui-monospace, monospace;
+    padding: 12px 12px 12px 30px;
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--rule-2);
+    border-radius: 3px;
+  }
+  .controls select {
+    width: 100%;
+    font: 400 15px/1.2 "Public Sans", sans-serif;
+    padding: 12px;
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--rule-2);
+    border-radius: 3px;
+  }
+
+  .answer { display: block; padding: 26px 26px 22px; }
+  .answer-lead {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  /* The one loud thing on the page. Everything else stays quiet so this
+     carries the whole hierarchy. */
+  .answer-big {
+    margin: 4px 0 2px;
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(44px, 8.5vw, 76px);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--keep);
+    font-variant-numeric: tabular-nums;
+  }
+  .answer-sub { margin: 0 0 20px; color: var(--muted); font-size: 15px; }
+
+  .answer-rows {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 34px;
+    margin: 0 0 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+  }
+  .answer-rows div { display: flex; flex-direction: column; gap: 2px; }
+  .answer-rows dt { font-size: 12px; color: var(--muted); }
+  .answer-rows dd {
+    margin: 0;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+  }
+  .answer-link {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--keep);
+    text-decoration: none;
+  }
+  .answer-link:hover { text-decoration: underline; }
+
+  .section-label {
+    font-family: "Public Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 44px 0 12px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+    gap: 10px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 16px 17px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--card);
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color .12s, transform .12s;
+  }
+  .card:hover { border-color: var(--keep); transform: translateY(-1px); }
+  .card-route {
+    font-size: 12px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .card-need {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 23px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .card-sub { font-size: 13px; color: var(--muted); }
+  .card-delta { font-size: 12.5px; margin-top: 6px; font-weight: 600; }
+  .card-delta.up { color: var(--keep); }
+  .card-delta.down { color: var(--gone); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card { transition: none; }
+    .card:hover { transform: none; }
+  }

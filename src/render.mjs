@@ -46,6 +46,7 @@ ${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script
 <nav class="top">
   <a class="brand" href="${BASE}/">${esc(SITE_NAME)}</a>
   <a href="${BASE}/compare/">Compare</a>
+  <a href="${BASE}/insights/">Analysis</a>
   <a href="${BASE}/take-home/">UK take-home</a>
   <a href="${BASE}/mortgage/">Mortgage</a>
   <a href="${BASE}/salaries/">Every salary</a>

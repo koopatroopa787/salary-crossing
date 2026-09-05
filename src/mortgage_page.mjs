@@ -113,8 +113,8 @@ export function mortgagePage() {
 
 <article>
   <h2>The multiple is a ceiling, not a target</h2>
-  <p>Regulators cap lending at <strong>4.5 times income</strong> for all but 15% of a lender's new mortgages, so most people are quoted a maximum of 4.5x and treat it as the budget. Run the numbers at that maximum and the monthly payment comes to roughly <strong>35 to 43% of take-home pay</strong> &mdash; at every income from £25,000 to £150,000. Push it through the stress test and it clears half.</p>
-  <p>That is not a coincidence, it is what the ceiling means: it is the point at which lending stops, not the point at which it is comfortable. If you want the payment under a third of your net pay, you are looking at roughly 3.5x, not 4.5x.</p>
+  <p>Regulators cap lending at <strong>4.5 times income</strong> for all but 15% of a lender's new mortgages, so most people are quoted a maximum of 4.5x and treat it as the budget. Run the numbers at that maximum and the monthly payment comes to <strong>36% of take-home pay at £30,000, rising to 49% at £150,000</strong>. It rises with income, because the multiple is applied to gross while the payment comes out of net. Push it through the stress test and it reaches two thirds.</p>
+  <p>That is not a coincidence, it is what the ceiling means: it is the point at which lending stops, not the point at which it is comfortable. If you want the payment under a third of your net pay, you are looking at roughly 3.5x, not 4.5x. The full arithmetic is in <a href="${BASE}/insights/four-and-a-half-times-income/">4.5&times; is a ceiling, not a budget</a>.</p>
 
   <h2>Why two salaries beat one</h2>
   <p>Two people earning £30,000 each and one person earning £60,000 will be offered the same mortgage &mdash; the multiple is applied to gross household income either way. But the couple takes home more, because they get two personal allowances and two goes at the basic-rate band. Same loan, more money to pay it with.</p>

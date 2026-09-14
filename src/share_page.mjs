@@ -18,7 +18,7 @@ import { YEAR_LABEL } from "./rates.mjs";
 const opt = (code) =>
   `<option value="${code}">${country(code).meta.cities[0]} &middot; ${country(code).meta.name}</option>`;
 
-export const EMBED_SNIPPET = `<iframe src="${ORIGIN}/embed/?from=UK&to=AE&gross=75000" title="Salary comparison calculator" width="100%" height="460" style="border:0;max-width:720px" loading="lazy"></iframe>
+export const EMBED_SNIPPET = `<iframe src="${ORIGIN}/embed/?from=UK&to=AE&gross=75000" title="Salary comparison calculator" width="100%" height="480" style="border:0;max-width:720px" loading="lazy"></iframe>
 <p style="font-size:13px">Calculator by <a href="${ORIGIN}/">Salary Crossing</a></p>`;
 
 export function embedPage({ rates }) {
@@ -31,7 +31,7 @@ export function embedPage({ rates }) {
 <title>Salary comparison &mdash; ${esc(SITE_NAME)}</title>
 <link rel="canonical" href="${url("/")}">
 <link rel="stylesheet" href="${assets.style}">
-<style>body{background:transparent;padding:4px}.engine{max-width:720px}.answer-big{font-size:clamp(30px,8vw,46px)}.credit{font-size:12px;color:var(--muted);margin:8px 2px 0}.credit a{color:var(--keep)}</style>
+<style>body{background:transparent;padding:4px}.engine{max-width:720px}.answer-big{font-size:clamp(30px,8vw,46px)}.credit{font-size:12px;color:var(--muted);margin:8px 2px 0}.credit a{color:var(--keep)}@media (min-width:520px){.engine{grid-template-columns:minmax(200px,4fr) 6fr}.controls{border-right:1px solid var(--rule);border-bottom:0;padding:16px}}</style>
 </head>
 <body>
 <section class="engine" aria-label="Salary comparison">
@@ -96,7 +96,7 @@ export function sharePage(articles) {
   <p>Paste this into any page that accepts HTML. Change <code>from</code>, <code>to</code> and <code>gross</code> in the address to open on a different comparison. Codes: ${CODES.map((c) => `<code>${c}</code> (${esc(country(c).meta.cities[0])})`).join(", ")}.</p>
   <textarea readonly rows="4" style="width:100%;font:13px/1.5 'IBM Plex Mono',monospace;padding:10px;border:1px solid var(--rule-2);border-radius:3px;background:var(--card);color:var(--ink)" onclick="this.select()">${esc(EMBED_SNIPPET)}</textarea>
   <p>It runs entirely in your reader's browser: no cookies, no advertising, nothing sent to us but a visit count. It updates itself when tax rates change, so you never have to.</p>
-  <iframe src="/embed/?from=UK&amp;to=USNY&amp;gross=90000" title="Salary comparison calculator preview" width="100%" height="460" style="border:0;margin-top:8px" loading="lazy"></iframe>
+  <iframe src="/embed/?from=UK&amp;to=USNY&amp;gross=90000" title="Salary comparison calculator preview" width="100%" height="480" style="border:0;margin-top:8px" loading="lazy"></iframe>
 
   <h2>Quote or republish the analysis</h2>
   <p>The tables in these pieces are free to quote, chart or republish in full, in print or online, under <a href="https://creativecommons.org/licenses/by/4.0/" rel="nofollow">CC BY 4.0</a>. Credit it as <em>Source: Salary Crossing</em> with a link to the piece:</p>

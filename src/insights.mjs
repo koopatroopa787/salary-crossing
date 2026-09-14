@@ -104,8 +104,9 @@ function scotlandCrossover() {
   for (let s = 12000; s <= 200000; s += 100) if (diff(s) < 0 && crossover === null) crossover = s;
 
   const rows = [20000, 25000, 30000, 33500, 40000, 50000, 75000, 100000, 150000].map((s) => {
-    const d = diff(s);
-    return [money(s), `${d >= 0 ? "+" : "−"}${money(Math.abs(d))}`, d >= 0 ? "better off" : "worse off"];
+    const d = Math.round(diff(s));
+    if (d === 0) return [money(s), money(0), "the crossover"];   // not "−£0, worse off"
+    return [money(s), `${d > 0 ? "+" : "−"}${money(Math.abs(d))}`, d > 0 ? "better off" : "worse off"];
   });
 
   return article({

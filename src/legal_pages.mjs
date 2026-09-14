@@ -8,15 +8,16 @@
  *   sent to the server, and the privacy policy says so because it is true, not
  *   as a marketing line. If that ever stops being true, this file must change
  *   in the same commit.
- * - There is no analytics and no advertising yet. The policy states that
- *   plainly rather than pre-emptively describing cookies that do not exist.
+ * - Visits are counted by a first-party beacon (BEACON in render.mjs) with no
+ *   cookie and no third party. There is no advertising yet. The policy states
+ *   that plainly rather than pre-emptively describing cookies that do not exist.
  */
 import { YEAR_LABEL } from "./rates.mjs";
 import { CONTACT, SITE_NAME, url } from "./site.mjs";
 import { shell, esc } from "./render.mjs";
 import { country, CODES } from "./compare.mjs";
 
-const UPDATED = "5 September 2026";
+const UPDATED = "14 September 2026";
 
 const page = (title, description, path, body) =>
   shell({ title, description, canonical: url(path), body, script: " " });
@@ -80,9 +81,11 @@ export function privacyPage() {
   <p>This is a structural fact, not a promise about how we behave: the pages are static files and the arithmetic ships to you as JavaScript. There is no server-side code that could receive a salary even if someone wanted it to.</p>
 
   <h2>What is recorded automatically</h2>
-  <p>Like any web server, ours records a line for each request: the IP address, the time, the page requested, the referring page and the browser's user-agent string. This is standard web-server logging, used to keep the site running and to spot abuse. The server is an Oracle Cloud instance in the <strong>UK London</strong> region, so those logs stay in the United Kingdom.</p>
+  <p>Like any web server, ours records a line for each request: the IP address, the time, the page requested, the referring page and the browser's user-agent string. This is standard web-server logging, used to keep the site running and to spot abuse.</p>
+  <p>Each page also sends one small request back to our own server containing the address of the page and the site that linked you to it. That is how we count visits, since most pages are delivered from Cloudflare's cache and never reach our server otherwise. Nothing is stored in your browser for this. Log lines, including IP addresses, are deleted after 14 days; what is kept after that is daily totals only: how many visits, to which pages, from which sites and which countries.</p>
+  <p>The server is an Oracle Cloud instance in the <strong>UK London</strong> region, so those logs stay in the United Kingdom.</p>
 
-  <h2>No cookies, no analytics, no tracking</h2>
+  <h2>No cookies, no tracking</h2>
   <p>This site sets no cookies. There is no Google Analytics, no Meta pixel, no session tracking, no fingerprinting and no advertising at the time of writing. Nothing follows you between pages or between sites.</p>
   <p>If advertising is ever added, it will involve third-party cookies and this page will be updated before it goes live, not after.</p>
 

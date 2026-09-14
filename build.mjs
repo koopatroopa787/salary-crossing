@@ -14,6 +14,7 @@ import { mortgagePage } from "./src/mortgage_page.mjs";
 import { comparePage, compareIndexPage } from "./src/compare_page.mjs";
 import { aboutPage, privacyPage, termsPage, notFoundPage } from "./src/legal_pages.mjs";
 import { insights, insightsIndexPage } from "./src/insights.mjs";
+import { embedPage, sharePage } from "./src/share_page.mjs";
 import { CODES, country } from "./src/compare.mjs";
 import { fetchRates, rate as fxRate } from "./src/fx.mjs";
 import { COUNTRIES } from "./src/compare.mjs";
@@ -158,6 +159,11 @@ async function main() {
     await writeFile(out(`/insights/${a.slug}/index.html`), a.render());
   }
 
+  await mkdir(out("/embed"), { recursive: true });
+  await writeFile(out("/embed/index.html"), embedPage({ rates }));      // noindex, not in the sitemap
+  await mkdir(out("/use-our-numbers"), { recursive: true });
+  await writeFile(out("/use-our-numbers/index.html"), sharePage(articles));
+
   const pairs = await buildComparisons(fx);
 
   for (const [i, salary] of salaries.entries()) {
@@ -171,7 +177,7 @@ async function main() {
 
   const urls = [
     "/", "/take-home/", "/mortgage/", "/compare/", ...compareUrls,
-    "/about/", "/privacy/", "/terms/",
+    "/about/", "/privacy/", "/terms/", "/use-our-numbers/",
     "/insights/", ...articles.map((a) => `/insights/${a.slug}/`),
     "/salaries/", ...salaries.map((s) => `/salary/${s}/`),
   ];

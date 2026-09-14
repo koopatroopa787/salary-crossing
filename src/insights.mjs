@@ -46,7 +46,9 @@ const article = ({ slug, title, description, eyebrow, h1, standfirst, body }) =>
   <h1>${h1}</h1>
   <p class="standfirst">${standfirst}</p>
 </header>
-<article>${body}</article>`,
+<article>${body}
+  <p class="hint">Writing about this? The table is free to quote or republish with a credit link. <a href="${BASE}/use-our-numbers/">How to use it</a>.</p>
+</article>`,
   }),
 });
 

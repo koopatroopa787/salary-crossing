@@ -17,6 +17,17 @@ export const esc = (s) => String(s).replace(/[&<>"]/g, (c) =>
 const FONTS = "https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500"
   + "&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap";
 
+/**
+ * Visit counting.
+ *
+ * ponytail: Cloudflare serves most page views from its edge cache, so the
+ * nginx access log only sees the misses and undercounts badly. One uncached
+ * POST per page view, logged by nginx and totalled by stats.mjs, counts them
+ * all. No cookie, nothing stored in the browser, no third party. Crawlers
+ * mostly don't run scripts, which filters them for free.
+ */
+export const BEACON = `<script>try{navigator.sendBeacon("/hit?p="+encodeURIComponent(location.pathname)+"&r="+encodeURIComponent(document.referrer))}catch(e){}</script>`;
+
 export function shell({ title, description, canonical, body, jsonLd, script }) {
   return `<!doctype html>
 <html lang="en-GB">
@@ -57,10 +68,11 @@ ${body}
   <p>Rates for ${YEAR_LABEL} (${YEAR_RANGE}) checked against <a href="https://www.gov.uk/income-tax-rates">gov.uk income tax rates</a>, <a href="https://www.gov.uk/scottish-income-tax">Scottish income tax</a>, <a href="https://www.gov.uk/national-insurance-rates-letters">National Insurance rates</a> and <a href="https://www.gov.uk/repaying-your-student-loan/what-you-pay">student loan repayment</a>.</p>
   ${AUTHOR.name ? `<p>Written and maintained by ${esc(AUTHOR.name)}. ${esc(AUTHOR.bio)}</p>` : ""}
   <p>Questions or a figure that looks wrong: <a href="mailto:${CONTACT}">${CONTACT}</a></p>
-  <p class="legal-links"><a href="${BASE}/about/">About</a> <a href="${BASE}/privacy/">Privacy</a> <a href="${BASE}/terms/">Terms</a></p>
+  <p class="legal-links"><a href="${BASE}/about/">About</a> <a href="${BASE}/use-our-numbers/">Use our numbers</a> <a href="${BASE}/privacy/">Privacy</a> <a href="${BASE}/terms/">Terms</a></p>
 </footer>
 </div>
 ${script ?? calculatorScript()}
+${BEACON}
 </body>
 </html>
 `;

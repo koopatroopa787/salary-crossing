@@ -28,12 +28,13 @@ export function parse(line) {
   if (!time || !p || BOT.test(ua)) return null;
   const path = decode(p);
   if (!path.startsWith("/") || path.length > 200) return null;
+  const event = path.match(/^\/event\/([a-z0-9-]+)$/)?.[1] ?? null;
   let ref = "(direct)";
   try {
     const host = new URL(decode(r)).hostname.replace(/^www\./, "");
     ref = host === "salarycrossing.com" ? null : host;
   } catch { /* empty or malformed referrer: direct */ }
-  return { day: time.slice(0, 10), visitor: ip + "|" + ua, country: country || "??", path, ref };
+  return { day: time.slice(0, 10), visitor: ip + "|" + ua, country: country || "??", path, ref, event };
 }
 
 const bump = (o, k) => { o[k] = (o[k] ?? 0) + 1; };
@@ -43,7 +44,8 @@ export function tally(views) {
   const days = {};
   const seen = {};
   for (const v of views) {
-    const d = (days[v.day] ??= { views: 0, visitors: 0, pages: {}, refs: {}, countries: {} });
+    const d = (days[v.day] ??= { views: 0, visitors: 0, pages: {}, refs: {}, countries: {}, events: {} });
+    if (v.event) { bump(d.events, v.event); continue; }
     d.views++;
     bump(d.pages, v.path);
     if (v.ref) bump(d.refs, v.ref);
@@ -86,11 +88,11 @@ function main() {
   const days = Object.keys(history).sort().slice(-span);
   if (!days.length) return console.log("No visits recorded yet.");
 
-  let views = 0, visitors = 0, pages = {}, refs = {}, countries = {};
+  let views = 0, visitors = 0, pages = {}, refs = {}, countries = {}, events = {};
   for (const d of days) {
     const h = history[d];
     views += h.views; visitors += h.visitors;
-    pages = merge(pages, h.pages); refs = merge(refs, h.refs); countries = merge(countries, h.countries);
+    pages = merge(pages, h.pages); refs = merge(refs, h.refs); countries = merge(countries, h.countries); events = merge(events, h.events ?? {});
   }
 
   const row = (k, n) => `  ${String(n).padStart(6)}  ${k}`;
@@ -100,6 +102,7 @@ function main() {
   console.log("\nWhere they came from");      top(refs, 15).forEach(([k, n]) => console.log(row(k, n)));
   console.log("\nTop pages");                 top(pages, 15).forEach(([k, n]) => console.log(row(k, n)));
   console.log("\nCountries (visitors)");      top(countries, 10).forEach(([k, n]) => console.log(row(k, n)));
+  console.log("\nProduct actions");           top(events, 10).forEach(([k, n]) => console.log(row(k, n)));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) main();

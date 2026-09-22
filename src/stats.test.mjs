@@ -28,3 +28,17 @@ test("visitors are distinct per day, views are not", () => {
   assert.deepEqual(days["2026-09-14"].refs, { "(direct)": 2 });
   assert.equal(days["2026-09-15"].visitors, 1);
 });
+
+test("product actions are counted without inflating page views", () => {
+  const days = tally([
+    line("/", ""),
+    line("/event/cost-layer-opened", "https://salarycrossing.com/"),
+    line("/event/comparison-link-copied", "https://salarycrossing.com/"),
+  ].map(parse));
+  assert.equal(days["2026-09-14"].views, 1);
+  assert.equal(days["2026-09-14"].visitors, 1);
+  assert.deepEqual(days["2026-09-14"].events, {
+    "cost-layer-opened": 1,
+    "comparison-link-copied": 1,
+  });
+});

@@ -43,19 +43,25 @@ export function country(code) {
  */
 export function equivalentGross(gross, fromCode, toCode, rate, opts = {}) {
   const from = country(fromCode);
-  const to = country(toCode);
-
   const targetNet = from.netPay(gross, opts.from ?? {}).net * rate;
+
+  return grossForNet(targetNet, toCode, opts.to ?? {});
+}
+
+/** Gross salary needed in one jurisdiction to reach a chosen annual net. */
+export function grossForNet(targetNet, code, opts = {}) {
+  const destination = country(code);
+  const wanted = Math.max(0, Number(targetNet) || 0);
 
   // Net is monotonically increasing in gross in every country here — the UK
   // suite proves it explicitly — so bisection is guaranteed to converge.
   let low = 0;
-  let high = Math.max(targetNet * 4, 1000);
-  for (let i = 0; i < 200 && to.netPay(high, opts.to ?? {}).net < targetNet; i++) high *= 2;
+  let high = Math.max(wanted * 4, 1000);
+  for (let i = 0; i < 200 && destination.netPay(high, opts).net < wanted; i++) high *= 2;
 
   for (let i = 0; i < 60; i++) {
     const mid = (low + high) / 2;
-    if (to.netPay(mid, opts.to ?? {}).net < targetNet) low = mid;
+    if (destination.netPay(mid, opts).net < wanted) low = mid;
     else high = mid;
   }
   return (low + high) / 2;

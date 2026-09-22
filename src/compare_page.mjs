@@ -1,6 +1,7 @@
 import { compare, country, fmt } from "./compare.mjs";
 import { BASE, url } from "./site.mjs";
 import { shell } from "./render.mjs";
+import { comparisonHash } from "./living_costs.mjs";
 
 const pct = (n) => (n * 100).toFixed(1) + "%";
 
@@ -76,6 +77,8 @@ export function comparePage({ gross, from, to, rate, fxDate, neighbours = [], is
 
 ${sideBySide(c)}
 
+<p class="route-cta"><a href="${BASE}/${comparisonHash({ from, to, gross })}">Adjust this salary and add your own living costs &rarr;</a></p>
+
 <div class="raise">
   <table>
     <caption>The three numbers that matter</caption>
@@ -95,7 +98,8 @@ ${sideBySide(c)}
 
 <article>
   <h2>What this does and does not include</h2>
-  <p>This compares <strong>take-home pay only</strong> &mdash; income tax and compulsory social contributions, nothing else. It does not adjust for rent, childcare, healthcare or schooling, and those differences are often larger than the tax ones. A salary that looks better in ${b.cities[0]} can still leave you worse off once housing is paid for.</p>
+  <p>This page compares <strong>take-home pay only</strong> &mdash; income tax and compulsory social contributions. Rent, childcare, healthcare and schooling can be larger than the tax difference. Use the calculator above to add your own monthly costs for both places; it deliberately does not guess them from a city average.</p>
+  <p>It cannot answer whether moving is worthwhile. People move for family, relationships, career direction, lifestyle and reasons that have no sensible price. This is the financial part of the comparison, not a verdict on the decision.</p>
   <p>The exchange rate is the European Central Bank reference rate for ${fxDate}. Rates move; the tax arithmetic does not.</p>
 
   <h2>Where the numbers come from</h2>
@@ -143,7 +147,7 @@ export function compareIndexPage(pairs) {
 </ul>
 <article>
   <h2>Why four countries and not a hundred and fifty</h2>
-  <p>Plenty of sites advertise salary comparisons for 150 countries. Nobody maintains 150 tax codes accurately, and an approximate answer to "can I afford to move" is worse than no answer.</p>
+  <p>Plenty of sites advertise salary comparisons for 150 countries. Nobody maintains 150 tax codes accurately, and a plausible-looking wrong tax figure is worse than a smaller set of figures you can verify.</p>
   <p>Each country here is encoded from its own tax authority's published rates, linked on every page, and covered by tests that assert the published worked examples rather than whatever the code happens to produce. More countries will be added the same way, one at a time.</p>
 </article>`;
 

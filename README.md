@@ -19,7 +19,7 @@ Every rate is taken from the authority that sets it, and every page links its so
 
 ## Why so few countries
 
-Plenty of sites claim 150 countries. Nobody maintains 150 tax codes accurately, and a plausible-looking wrong answer to "can I afford to move" is worse than none.
+Plenty of sites claim 150 countries. Nobody maintains 150 tax codes accurately, and a plausible-looking wrong tax figure is worse than a smaller set of figures a reader can verify.
 
 Two examples of what accuracy costs:
 
@@ -35,6 +35,8 @@ A US state that hasn't been encoded throws rather than quietly returning a numbe
 - **Equivalent salary by bisection** over each country's own `netPay` function, not by inverting each tax code algebraically. One method works for every jurisdiction, tapers and cliff edges included, and can't drift from the forward calculation.
 - **Exchange rates** are European Central Bank reference rates fetched at build time and cached, so an API outage can't break a build. AED is derived through its fixed USD peg (3.6725), since the ECB doesn't publish it.
 - **Assets are content-hashed** — the stylesheet by filename, the module tree by directory — so a redeploy can never be served a stale cached copy.
+- **Optional living costs use the visitor's figures.** Housing, healthcare, childcare, transport and other essentials can be entered for both places; they are never silently replaced with a city average.
+- **Shareable and embeddable comparisons.** A copied link restores the selected salary and costs, while publishers can configure a free iframe from `/use-our-numbers/`.
 
 ## Layout
 
@@ -56,6 +58,6 @@ A US state that hasn't been encoded throws rather than quietly returning a numbe
 
 No dependencies — plain Node 18+.
 
-## Not included
+## Limits
 
-Tax and compulsory contributions only: not rent, childcare, healthcare or schooling, which often matter more. Figures assume a single person on ordinary employment income with standard allowances. An estimate, not tax advice.
+The tax model covers income tax and compulsory contributions. Living costs are included only when the visitor enters their own monthly estimates; the site does not claim that one city average represents every household. Figures assume a single person on ordinary employment income with standard allowances. An estimate, not tax advice.

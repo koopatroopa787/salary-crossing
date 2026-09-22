@@ -68,7 +68,7 @@ ${body}
   <p>Rates for ${YEAR_LABEL} (${YEAR_RANGE}) checked against <a href="https://www.gov.uk/income-tax-rates">gov.uk income tax rates</a>, <a href="https://www.gov.uk/scottish-income-tax">Scottish income tax</a>, <a href="https://www.gov.uk/national-insurance-rates-letters">National Insurance rates</a> and <a href="https://www.gov.uk/repaying-your-student-loan/what-you-pay">student loan repayment</a>.</p>
   ${AUTHOR.name ? `<p>Written and maintained by ${esc(AUTHOR.name)}. ${esc(AUTHOR.bio)}</p>` : ""}
   <p>Questions or a figure that looks wrong: <a href="mailto:${CONTACT}">${CONTACT}</a></p>
-  <p class="legal-links"><a href="${BASE}/about/">About</a> <a href="${BASE}/use-our-numbers/">Use our numbers</a> <a href="${BASE}/privacy/">Privacy</a> <a href="${BASE}/terms/">Terms</a></p>
+  <p class="legal-links"><a href="${BASE}/about/">About</a> <a href="${BASE}/use-our-numbers/">Embed this calculator</a> <a href="${BASE}/privacy/">Privacy</a> <a href="${BASE}/terms/">Terms</a></p>
 </footer>
 </div>
 ${script ?? calculatorScript()}

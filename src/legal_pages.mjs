@@ -17,7 +17,7 @@ import { CONTACT, SITE_NAME, url } from "./site.mjs";
 import { shell, esc } from "./render.mjs";
 import { country, CODES } from "./compare.mjs";
 
-const UPDATED = "14 September 2026";
+const UPDATED = "22 September 2026";
 
 const page = (title, description, path, body) =>
   shell({ title, description, canonical: url(path), body, script: " " });
@@ -48,12 +48,13 @@ export function aboutPage() {
   <p>The figures are computed when the site is built, from those published rates. Nothing is copied from a competitor and nothing is estimated by an AI.</p>
 
   <h2>Why so few countries</h2>
-  <p>Other sites advertise comparisons for 150 countries. Nobody maintains 150 tax codes accurately. An approximate answer to "can I afford to move" is worse than no answer, because you cannot tell it is wrong.</p>
+  <p>Other sites advertise comparisons for 150 countries. Nobody maintains 150 tax codes accurately. A plausible-looking wrong tax figure is worse than a smaller set of figures you can verify, because you cannot tell it is wrong.</p>
   <p>Two examples of what accuracy costs. New York levies a supplemental tax above $107,650 that claws back the benefit of its lower brackets; using the headline bracket table and skipping it understates New York by thousands, so this site uses the State's own annual schedule instead. California's State Disability Insurance lost its wage cap in 2024, which is worth $6,500 a year at a $500,000 salary and is routinely left out. Getting those right takes reading the source documents, and it does not scale to 150 countries.</p>
   <p>Where a jurisdiction is not modelled, the code refuses to produce a number rather than guessing. Asking for a US state that has not been encoded raises an error; it does not quietly return a figure that is too low.</p>
 
-  <h2>What the figures deliberately exclude</h2>
-  <p>Tax and compulsory contributions only. Not rent, not childcare, not health insurance, not schooling, not the cost of the move itself &mdash; and those differences are frequently larger than the tax ones. A salary that looks better in Dubai can still leave you worse off once housing is paid for.</p>
+  <h2>What the figures can and cannot tell you</h2>
+  <p>The comparison pages show tax and compulsory contributions. The main calculator can also use monthly housing, healthcare, childcare, transport and other costs when you enter your own estimates. It does not substitute a city average for your household.</p>
+  <p>No financial model can decide whether a move is worthwhile. People move for family, relationships, career direction, lifestyle and reasons that have no sensible price. ${SITE_NAME} compares the pay component of two offers; it does not score your life or tell you whether to move.</p>
   <p>Every figure assumes a single person on ordinary employment income with the standard allowances, paid evenly across the year. Bonuses, mid-year job changes, joint filing, dependants, pension arrangements and non-domiciled status all change the answer.</p>
   <p>Exchange rates are European Central Bank daily reference rates and move constantly. The tax arithmetic does not.</p>
 
@@ -82,7 +83,7 @@ export function privacyPage() {
 
   <h2>What is recorded automatically</h2>
   <p>Like any web server, ours records a line for each request: the IP address, the time, the page requested, the referring page and the browser's user-agent string. This is standard web-server logging, used to keep the site running and to spot abuse.</p>
-  <p>Each page also sends one small request back to our own server containing the address of the page and the site that linked you to it. That is how we count visits, since most pages are delivered from Cloudflare's cache and never reach our server otherwise. Nothing is stored in your browser for this. Log lines, including IP addresses, are deleted after 14 days; what is kept after that is daily totals only: how many visits, to which pages, from which sites and which countries.</p>
+  <p>Each page also sends one small request back to our own server containing the address of the page and the site that linked you to it. The calculator records anonymous totals when somebody opens the cost section or copies a comparison or embed link. The salary, cost figures and URL fragment containing them are not included. Nothing is stored in your browser for this. Log lines, including IP addresses, are deleted after 14 days; what is kept after that is daily totals only: how many visits, product actions, pages, referring sites and countries.</p>
   <p>The server is an Oracle Cloud instance in the <strong>UK London</strong> region, so those logs stay in the United Kingdom.</p>
 
   <h2>No cookies, no tracking</h2>

@@ -102,7 +102,7 @@ async function main() {
   // Hash the whole module tree together and emit it into one versioned
   // directory, so relative imports between modules still resolve and a
   // redeploy cannot be served a stale (or wrongly-typed) cached copy.
-  const modules = ["tax.mjs", "rates.mjs", "mortgage.mjs", "compare.mjs"];
+  const modules = ["tax.mjs", "rates.mjs", "mortgage.mjs", "compare.mjs", "embed_options.mjs", "living_costs.mjs", "site.mjs"];
   const countryModules = ["common.mjs", "uk.mjs", "ae.mjs", "us.mjs", "au.mjs"];
   const sources = [];
   for (const f of modules) sources.push(await readFile(new URL(`./src/${f}`, import.meta.url)));

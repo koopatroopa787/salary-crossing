@@ -15,6 +15,7 @@ test("every country module honours the contract", () => {
     const r = c.netPay(60000);
     assert.equal(r.net, r.gross - r.totalDeductions, `${code} arithmetic`);
     assert.ok(r.net <= r.gross && r.net >= 0, `${code} plausible net`);
+    assert.ok(r.retirement?.label && r.retirement?.description, `${code} retirement explanation`);
     for (const d of r.deductions) {
       assert.ok(d.amount >= 0 && Number.isFinite(d.amount), `${code}: ${d.name}`);
     }
@@ -75,8 +76,18 @@ test("Australian tax at published figures", () => {
   const r = au.netPay(100000);
   close(r.deductions.find((d) => d.name === "Income tax").amount, 4020 + 16500, "AU tax on 100k");
   close(r.deductions.find((d) => d.name === "Medicare levy").amount, 2000, "levy");
+  close(r.retirement.amount, 12000, "12% employer super is kept separate from take-home");
+  assert.equal(r.net, 100000 - r.totalDeductions, "employer super does not reduce cash salary");
+  close(au.netPay(500000).retirement.amount,
+    au.SUPER_MAXIMUM_EARNINGS * au.SUPER_GUARANTEE_RATE, "super contribution base cap");
   // Under the tax-free threshold, nothing at all.
   assert.equal(au.netPay(18000).totalDeductions, 0);
+});
+
+test("retirement benefits are explained without inventing scheme-specific values", () => {
+  assert.equal(country("UK").netPay(60000).retirement.value, "Scheme-dependent");
+  assert.equal(country("AE").netPay(300000).retirement.value, "Depends on tenure");
+  assert.equal(country("USNY").netPay(120000).retirement.value, "Plan-dependent");
 });
 
 test("equivalent gross round-trips", () => {

@@ -37,6 +37,7 @@ A US state that hasn't been encoded throws rather than quietly returning a numbe
 - **Assets are content-hashed** — the stylesheet by filename, the module tree by directory — so a redeploy can never be served a stale cached copy.
 - **Optional living costs use the visitor's figures.** Housing, healthcare, childcare, transport and other essentials can be entered for both places; they are never silently replaced with a city average.
 - **Shareable and embeddable comparisons.** A copied link restores the selected salary and costs, while publishers can configure a free iframe from `/use-our-numbers/`.
+- **Retirement value stays separate.** Comparison pages distinguish spendable take-home from scheme-dependent pension, employer-funded Australian super and UAE end-of-service benefits instead of presenting all compulsory money as lost.
 
 ## Layout
 
@@ -60,4 +61,4 @@ No dependencies — plain Node 18+.
 
 ## Limits
 
-The tax model covers income tax and compulsory contributions. Living costs are included only when the visitor enters their own monthly estimates; the site does not claim that one city average represents every household. Figures assume a single person on ordinary employment income with standard allowances. An estimate, not tax advice.
+The tax model covers income tax and compulsory contributions. Retirement benefits are disclosed separately and do not change the headline take-home comparison unless a future input explicitly models an employee contribution. Living costs are included only when the visitor enters their own monthly estimates; the site does not claim that one city average represents every household. Figures assume a single person on ordinary employment income with standard allowances. An estimate, not tax advice.

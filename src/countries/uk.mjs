@@ -11,6 +11,7 @@ export const meta = {
   sources: [
     { label: "gov.uk income tax rates", url: "https://www.gov.uk/income-tax-rates" },
     { label: "gov.uk National Insurance", url: "https://www.gov.uk/national-insurance-rates-letters" },
+    { label: "gov.uk workplace pension contributions", url: "https://www.gov.uk/workplace-pensions/what-you-your-employer-and-the-government-pay" },
   ],
 };
 
@@ -23,5 +24,10 @@ export function netPay(gross, opts = {}) {
   if (r.studentLoan > 0) deductions.push({ name: "Student loan", amount: r.studentLoan });
   return summarise(gross, deductions, [
     "Employee National Insurance, standard tax code, no pension contributions.",
-  ]);
+  ], {
+    label: "Workplace pension",
+    amount: null,
+    value: "Scheme-dependent",
+    description: "Not deducted in this comparison. If enrolled, the legal minimum is 8% of qualifying earnings: at least 3% from the employer and usually 5% from the employee, including tax relief. Employees can opt out and schemes vary.",
+  });
 }

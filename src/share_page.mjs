@@ -46,7 +46,7 @@ export function embedPage({ rates }) {
     <a class="answer-link" id="a-link" target="_blank" rel="noopener" href="${ORIGIN}/">Explore this comparison &rarr;</a>
   </output>
 </section>
-<p class="credit">Income tax and compulsory contributions only, ${YEAR_LABEL} rates. Excludes living costs and individual circumstances. Not tax advice. <a href="${ORIGIN}/" target="_blank" rel="noopener">${esc(SITE_NAME)}</a> &middot; <a href="${ORIGIN}/use-our-numbers/" target="_blank" rel="noopener">Add this calculator to your site</a></p>
+<p class="credit">Spendable take-home, ${YEAR_LABEL} rates. Full pages separate tax from retirement benefits. Excludes living costs and individual circumstances. Not tax advice. <a href="${ORIGIN}/" target="_blank" rel="noopener">${esc(SITE_NAME)}</a> &middot; <a href="${ORIGIN}/use-our-numbers/" target="_blank" rel="noopener">Add this calculator to your site</a></p>
 <noscript><p>This calculator needs JavaScript. <a href="${ORIGIN}/compare/" target="_blank" rel="noopener">Read the salary comparison tables</a>.</p></noscript>
 <script type="module">
 import { compare, country, fmt, CODES } from "${assets.js}/compare.mjs";
@@ -130,7 +130,7 @@ export function sharePage(articles) {
 
   <h2>What your readers get</h2>
   <p>A starting point for comparing employment offers: the gross salary needed in another jurisdiction to match take-home pay at home. Coverage: ${CODES.map((c) => esc(country(c).meta.name)).join(", ")}. The UK comparison uses England, Wales and Northern Ireland; Scotland has separate controls on the <a href="/take-home/">UK take-home calculator</a>.</p>
-  <p>It models standard employment income, income tax and compulsory contributions. It does not compare rent, healthcare, childcare, benefits, immigration eligibility or cross-border tax residency. It is an estimate, not personal tax advice.</p>
+  <p>It models standard employment income, income tax and compulsory contributions. The full comparison pages separate spendable take-home from workplace pension, Australian superannuation and UAE end-of-service benefits, with scheme limits stated clearly. It does not compare rent, healthcare, childcare, immigration eligibility or cross-border tax residency. It is an estimate, not personal tax advice.</p>
   <p>Calculations run in the reader's browser. There are no cookies or ads in the widget. Basic request logs and visit counts are described in our <a href="/privacy/">privacy policy</a>. The hosted calculator picks up updates when we publish them; you do not need to replace the code.</p>
 
   <h2>Free to use, with clear attribution</h2>

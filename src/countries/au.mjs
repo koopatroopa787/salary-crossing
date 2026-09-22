@@ -28,6 +28,8 @@ export const RESIDENT_BANDS = [
 export const MEDICARE_LEVY = 0.02;
 /** Below this the levy phases in rather than applying in full. */
 export const MEDICARE_LOWER_THRESHOLD = 27222;
+export const SUPER_GUARANTEE_RATE = 0.12;
+export const SUPER_MAXIMUM_EARNINGS = 270830;
 
 export const meta = {
   code: "AU", name: "Australia", theName: "Australia", adjective: "Australian",
@@ -37,6 +39,7 @@ export const meta = {
   sources: [
     { label: "ATO — resident tax rates", url: "https://www.ato.gov.au/tax-rates-and-codes/tax-rates-australian-residents" },
     { label: "ATO — Medicare levy", url: "https://www.ato.gov.au/individuals-and-families/medicare-and-private-health-insurance/medicare-levy" },
+    { label: "ATO — super guarantee", url: "https://www.ato.gov.au/tax-rates-and-codes/key-superannuation-rates-and-thresholds/super-guarantee" },
   ],
 };
 
@@ -46,6 +49,7 @@ export function netPay(gross) {
   // is a flat 2%. The phase-in itself is ignored, which only affects incomes
   // under about A$34,000 and errs slightly high there.
   const levy = gross > MEDICARE_LOWER_THRESHOLD ? gross * MEDICARE_LEVY : 0;
+  const employerSuper = Math.min(Math.max(0, gross), SUPER_MAXIMUM_EARNINGS) * SUPER_GUARANTEE_RATE;
 
   return summarise(gross, [
     { name: "Income tax", amount: tax },
@@ -53,5 +57,10 @@ export function netPay(gross) {
   ], [
     "Resident for tax purposes, no private health insurance surcharge.",
     "Superannuation is paid by the employer on top of salary, so it is not deducted here.",
-  ]);
+  ], {
+    label: "Employer superannuation",
+    amount: employerSuper,
+    value: null,
+    description: "Estimated mandatory employer contribution at 12% of qualifying earnings, capped at A$270,830 for 2026–27. It is shown separately because it is generally paid on top of cash salary and is not spendable today. If an offer says the package is inclusive of super, its cash salary will be lower.",
+  });
 }

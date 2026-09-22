@@ -19,6 +19,7 @@ export const meta = {
   sources: [
     { label: "u.ae — income tax", url: "https://u.ae/en/information-and-services/finance-and-investment/taxation/other-taxes/income-tax" },
     { label: "UAE Federal Tax Authority", url: "https://tax.gov.ae/en/" },
+    { label: "u.ae — expatriate pensions and gratuity", url: "https://u.ae/en/information-and-services/moving-to-the-uae/expatriates-working-in-the-uae/pension-schemes-for-expatriate-workers" },
   ],
 };
 
@@ -26,5 +27,10 @@ export function netPay(gross) {
   return summarise(gross, [], [
     "No personal income tax and no social security for expatriate employees.",
     "Employers owe an end-of-service gratuity instead of a pension contribution.",
-  ]);
+  ], {
+    label: "End-of-service benefit",
+    amount: null,
+    value: "Depends on tenure",
+    description: "Expatriate employees have no pension deduction. A gratuity generally accrues after one year and depends on basic salary and length of service, so it cannot be estimated from annual salary alone.",
+  });
 }

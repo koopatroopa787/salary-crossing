@@ -26,6 +26,33 @@ function deductionRows(side) {
   return rows.join("\n        ");
 }
 
+function retirementValue(side) {
+  const r = side.retirement;
+  if (!r) return "Not modelled";
+  return Number.isFinite(r.amount) ? `+${fmt(r.amount, side)} a year` : r.value;
+}
+
+function retirementBreakdown(c) {
+  const card = (side) => `
+    <div>
+      <span>${side.cities?.[0] ?? side.name}</span>
+      <strong>${retirementValue(side)}</strong>
+      <b>${side.retirement?.label ?? "Retirement benefit"}</b>
+      <p>${side.retirement?.description ?? "Retirement arrangements are not included in this comparison."}</p>
+    </div>`;
+
+  return `
+<section class="retirement-breakdown" aria-labelledby="retirement-title">
+  <p class="eyebrow">What is paid away and what stays yours</p>
+  <h2 id="retirement-title">Tax and retirement are <em>different money</em></h2>
+  <p>The matching salary above uses spendable take-home. Tax and compulsory payroll charges reduce that cash. Pension, superannuation and end-of-service benefits are shown separately because they may still have value to you later, but cannot pay today's rent.</p>
+  <div class="retirement-cards">
+    ${card(c.from)}
+    ${card(c.to)}
+  </div>
+</section>`;
+}
+
 function sideBySide(c) {
   const col = (side, label) => `
   <div class="panel slip">
@@ -77,6 +104,8 @@ export function comparePage({ gross, from, to, rate, fxDate, neighbours = [], is
 
 ${sideBySide(c)}
 
+${retirementBreakdown(c)}
+
 <p class="route-cta"><a href="${BASE}/${comparisonHash({ from, to, gross })}">Adjust this salary and add your own living costs &rarr;</a></p>
 
 <div class="raise">
@@ -98,7 +127,7 @@ ${sideBySide(c)}
 
 <article>
   <h2>What this does and does not include</h2>
-  <p>This page compares <strong>take-home pay only</strong> &mdash; income tax and compulsory social contributions. Rent, childcare, healthcare and schooling can be larger than the tax difference. Use the calculator above to add your own monthly costs for both places; it deliberately does not guess them from a city average.</p>
+  <p>This page compares <strong>spendable take-home pay</strong> &mdash; income tax and compulsory social contributions. Retirement benefits are listed separately above instead of being treated as money lost. Rent, childcare, healthcare and schooling can be larger than the tax difference. Use the calculator above to add your own monthly costs for both places; it deliberately does not guess them from a city average.</p>
   <p>It cannot answer whether moving is worthwhile. People move for family, relationships, career direction, lifestyle and reasons that have no sensible price. This is the financial part of the comparison, not a verdict on the decision.</p>
   <p>The exchange rate is the European Central Bank reference rate for ${fxDate}. Rates move; the tax arithmetic does not.</p>
 

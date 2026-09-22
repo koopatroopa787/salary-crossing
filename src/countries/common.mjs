@@ -4,7 +4,8 @@
  * The contract each country implements:
  *
  *   meta      { code, name, adjective, currency, symbol, cities, year, sources }
- *   netPay(gross, opts) -> { gross, deductions[], net, effectiveRate, notes[] }
+ *   netPay(gross, opts) ->
+ *     { gross, deductions[], net, effectiveRate, notes[], retirement }
  *
  * Deductions are itemised rather than summed because the interesting part of
  * a cross-border comparison is usually *what* is taken, not how much: the UK
@@ -33,7 +34,7 @@ export function marginalOf(netPay, gross, opts, step = 100) {
   return 1 - (b.net - a.net) / step;
 }
 
-export function summarise(gross, deductions, notes = []) {
+export function summarise(gross, deductions, notes = [], retirement = null) {
   const taken = deductions.reduce((sum, d) => sum + d.amount, 0);
   return {
     gross,
@@ -42,5 +43,6 @@ export function summarise(gross, deductions, notes = []) {
     net: gross - taken,
     effectiveRate: gross > 0 ? taken / gross : 0,
     notes,
+    retirement,
   };
 }

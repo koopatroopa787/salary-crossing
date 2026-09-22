@@ -39,6 +39,13 @@ const costInputs = (prefix, symbol) => COST_FIELDS.map(({ key, label }) => `
         <div class="cost-money"><span data-cost-symbol="${prefix}">${symbol}</span><input type="number" id="${prefix}-${key}" value="" min="0" max="1000000" step="50" inputmode="decimal" placeholder="0"></div>
       </div>`).join("");
 
+const retirementSummary = (side) => {
+  const value = Number.isFinite(side.retirement?.amount)
+    ? `+${fmt(side.retirement.amount, side)} employer contribution`
+    : side.retirement?.value ?? "Not modelled";
+  return `<div><dt>${side.cities[0]} retirement</dt><dd>${value}</dd></div>`;
+};
+
 export function homePage({ fx, rates }) {
   const lead = compare({ gross: 75000, from: "UK", to: "AE", rate: rates["UK>AE"] });
 
@@ -101,6 +108,13 @@ ${costInputs("to", "AED")}
       <div><dt>Taken here</dt><dd>${(lead.from.effectiveRate * 100).toFixed(1)}%</dd></div>
       <div><dt>Taken there</dt><dd>${(lead.to.effectiveRate * 100).toFixed(1)}%</dd></div>
     </dl>
+    <div class="retirement-summary">
+      <p><strong>Tax versus retirement</strong> Retirement benefits stay separate from spendable take-home.</p>
+      <dl id="retirement-rows">
+        ${retirementSummary(lead.from)}
+        ${retirementSummary(lead.to)}
+      </dl>
+    </div>
     <div class="result-actions">
       <a class="answer-link" id="a-link" href="/compare/uk-to-ae/">See tax sources and other salaries &rarr;</a>
       <button type="button" id="copy-comparison">Copy comparison link</button>
@@ -124,6 +138,9 @@ ${cards}
   <h2>Bring your real costs into the comparison</h2>
   <p>The tax result uses income tax and compulsory contributions only. Open <em>Add monthly living costs</em> to enter housing, healthcare, childcare, transport and other essentials for both places. The calculator then works out the salary that leaves the same amount after tax and those costs.</p>
   <p>The cost layer deliberately has no default city averages. Rent and family costs vary too widely for a single number to describe your household honestly.</p>
+
+  <h2>Tax paid is not the same as retirement saved</h2>
+  <p>Income tax and compulsory payroll charges reduce the cash available today. Pension and superannuation can also reduce current cash, but the money may remain yours for retirement. Salary Crossing keeps those figures separate and explains whether a benefit is deducted, paid by the employer on top, optional or dependent on tenure.</p>
 
   <h2>Money is one input, not the decision</h2>
   <p>A move can be right even when it leaves you financially worse off. Family, relationships, career direction, lifestyle and the desire for a change cannot be priced by a calculator. Salary Crossing compares the pay component of two offers; it does not score your life or tell you whether to move.</p>
@@ -205,6 +222,13 @@ function update() {
   }
 
   const c = compare({ gross, from, to, rate: RATES[from + ">" + to] });
+  const retirementHtml = (side) => {
+    const value = Number.isFinite(side.retirement?.amount)
+      ? "+" + fmt(side.retirement.amount, side) + " employer contribution"
+      : side.retirement?.value || "Not modelled";
+    return "<div><dt>" + side.cities[0] + " retirement</dt><dd>" + value + "</dd></div>";
+  };
+  $("retirement-rows").innerHTML = retirementHtml(c.from) + retirementHtml(c.to);
   if (useCosts) {
     const adjusted = matchAfterCosts({ gross, from, to, rate: RATES[from + ">" + to], fromCosts, toCosts });
     $("a-need").textContent = fmt(adjusted.gross, b);

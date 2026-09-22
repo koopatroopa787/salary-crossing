@@ -162,7 +162,12 @@ export function netPay(gross, opts = {}) {
   else if (code === "NY") notes.push("New York State and New York City resident tax, including the supplemental tax that recaptures the lower brackets above $107,650.");
   else if (code === "CA") notes.push("California state tax plus State Disability Insurance, which has had no wage cap since 2024.");
 
-  return summarise(gross, deductions, notes);
+  return summarise(gross, deductions, notes, {
+    label: "401(k) or employer retirement plan",
+    amount: null,
+    value: "Plan-dependent",
+    description: "Excluded because employee contributions and employer matches are optional and plan-specific. Social Security and Medicare reduce take-home above, but they are public insurance charges rather than a personal investment account.",
+  });
 }
 
 /** A concrete place, so a comparison page can say "New York" and mean it. */

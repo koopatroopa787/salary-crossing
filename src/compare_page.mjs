@@ -4,6 +4,10 @@ import { shell } from "./render.mjs";
 import { comparisonHash } from "./living_costs.mjs";
 
 const pct = (n) => (n * 100).toFixed(1) + "%";
+const searchName = (code, meta) => ({
+  UK: "UK", AE: "Dubai", AU: "Australia",
+  USNY: "New York", USCA: "California", USTX: "Texas",
+}[code] ?? meta.name);
 
 /** The sentence that makes the page worth landing on. */
 function verdict(c) {
@@ -93,12 +97,20 @@ export function comparePage({ gross, from, to, rate, fxDate, neighbours = [], is
   const a = country(from).meta;
   const b = country(to).meta;
   const slug = `${from.toLowerCase()}-to-${to.toLowerCase()}`;
+  const fromSearch = searchName(from, a);
+  const toSearch = searchName(to, b);
+  const heading = isHub
+    ? `${fromSearch} to ${toSearch} <em>salary comparison</em>`
+    : `${fmt(gross, a)} in ${a.cities[0]} &mdash; what you need in <em>${b.cities[0]}</em>`;
+  const conversionSection = a.currency === b.currency ? "" : `
+  <h2>${gross.toLocaleString(a.locale)} ${a.currency} to ${b.currency}</h2>
+  <p>At the ${fxDate} exchange rate, ${fmt(gross, a)} converts to <strong>${fmt(c.likeForLike.gross, b)}</strong> before tax. After ${b.name} income tax and compulsory payroll charges, that converted salary leaves ${fmt(c.likeForLike.net, b)}. The salary needed to match your original take-home is ${fmt(c.to.gross, b)}, which is why a currency conversion alone cannot compare two job offers.</p>`;
 
   const body = `
-<p class="crumb"><a href="${BASE}/compare/">Compare countries</a> / ${a.name} &rarr; ${b.name} / ${fmt(gross, a)}</p>
+<p class="crumb"><a href="${BASE}/compare/">Compare countries</a> / ${a.name} &rarr; ${b.name}${isHub ? "" : ` / ${fmt(gross, a)}`}</p>
 <header class="masthead">
   <p class="eyebrow">${a.name} ${a.year} &middot; ${b.name} ${b.year}</p>
-  <h1>${fmt(gross, a)} in ${a.cities[0]} &mdash; what you need in <em>${b.cities[0]}</em></h1>
+  <h1>${heading}</h1>
   <p class="verdict">To take home the same as ${fmt(gross, a)} does in ${a.theName ?? a.name}, you need <b>${fmt(c.to.gross, b)}</b> in ${b.theName ?? b.name}. ${verdict(c)}</p>
 </header>
 
@@ -126,6 +138,7 @@ ${retirementBreakdown(c)}
 </ul>
 
 <article>
+  ${conversionSection}
   <h2>What this does and does not include</h2>
   <p>This page compares <strong>spendable take-home pay</strong> &mdash; income tax and compulsory social contributions. Retirement benefits are listed separately above instead of being treated as money lost. Rent, childcare, healthcare and schooling can be larger than the tax difference. Use the calculator above to add your own monthly costs for both places; it deliberately does not guess them from a city average.</p>
   <p>It cannot answer whether moving is worthwhile. People move for family, relationships, career direction, lifestyle and reasons that have no sensible price. This is the financial part of the comparison, not a verdict on the decision.</p>
@@ -140,11 +153,11 @@ ${retirementBreakdown(c)}
 
   return shell({
     title: isHub
-      ? `${a.cities[0]} vs ${b.cities[0]} — Salary Comparison After Tax`
-      : `${fmt(gross, a)} in ${a.name} vs ${b.name} — Salary Comparison`,
+      ? `${fromSearch} vs ${toSearch} Salary Comparison After Tax`
+      : `${fmt(gross, a)} in ${fromSearch} vs ${toSearch} — Salary After Tax`,
     description: isHub
-      ? `Compare take-home pay between ${a.cities[0]} and ${b.cities[0]} at every salary. ${fmt(gross, a)} in ${a.cities[0]} needs ${fmt(c.to.gross, b)} in ${b.cities[0]} to match, after tax.`
-      : `To match ${fmt(gross, a)} in ${a.name} you need ${fmt(c.to.gross, b)} in ${b.name} after tax. Full side-by-side breakdown with sources.`,
+      ? `Compare ${fromSearch} and ${toSearch} salaries after tax. ${fmt(gross, a)} in ${a.cities[0]} needs ${fmt(c.to.gross, b)} in ${b.cities[0]} to match take-home pay.`
+      : `${gross.toLocaleString(a.locale)} ${a.currency} converts to ${fmt(c.likeForLike.gross, b)}. To match its after-tax value in ${toSearch}, you need ${fmt(c.to.gross, b)}.`,
     canonical: url(isHub ? `/compare/${slug}/` : `/compare/${slug}/${gross}/`),
     body,
     script: " ",

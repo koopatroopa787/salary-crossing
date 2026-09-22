@@ -7,6 +7,36 @@ import { assets } from "./assets.mjs";
 
 const DEFAULTS = { income1: 45000, income2: 0, deposit: 40000, monthlyDebts: 0, rate: 4.5, termYears: 25 };
 
+const salaryBorrowingTable = () => {
+  const salaries = [20000, 30000, 40000, 50000, 60000, 70000, 100000];
+  const rows = salaries.map((salary) => `
+    <tr>
+      <th scope="row"><a href="${BASE}/salary/${salary}/">${money(salary)}</a></th>
+      <td class="num">${money(salary * 4)}</td>
+      <td class="num keep">${money(salary * 4.5)}</td>
+      <td class="num">${money(salary * 5)}</td>
+    </tr>`).join("");
+
+  return `<div class="raise">
+  <table>
+    <caption>Mortgage by salary before deposit and affordability checks</caption>
+    <thead><tr><th scope="col">Annual salary</th><th class="num" scope="col">4x</th><th class="num" scope="col">4.5x</th><th class="num" scope="col">5x</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+</div>`;
+};
+
+const requiredIncomeTable = () => {
+  const loans = [100000, 150000, 200000, 250000, 300000, 400000];
+  return `<div class="raise">
+  <table>
+    <caption>Salary needed at a 4.5x income multiple</caption>
+    <thead><tr><th scope="col">Mortgage</th><th class="num" scope="col">Minimum gross income</th></tr></thead>
+    <tbody>${loans.map((loan) => `<tr><th scope="row">${money(loan)}</th><td class="num">${money(Math.ceil(loan / 4.5))}</td></tr>`).join("")}</tbody>
+  </table>
+</div>`;
+};
+
 function form(d) {
   return `
 <form id="m" autocomplete="off">
@@ -101,9 +131,9 @@ export function mortgagePage() {
 
   const body = `
 <header class="masthead">
-  <p class="eyebrow">Tax year ${YEAR_LABEL} &middot; ${DEFAULT_MULTIPLE}x loan-to-income ceiling</p>
-  <h1>How much house can you <em>actually</em> afford</h1>
-  <p class="standfirst">Lenders measure the payment against your gross salary. You pay it out of your take-home. This works out both, using the same tax engine as the <a href="${BASE}/">take-home calculator</a>, so the percentage you see is the one that will actually land on your bank statement.</p>
+  <p class="eyebrow">UK mortgage calculator &middot; tax year ${YEAR_LABEL}</p>
+  <h1>How much mortgage can I afford on my <em>salary?</em></h1>
+  <p class="standfirst">Enter your salary, deposit, debts and interest rate to estimate how much you could borrow, the property price it supports and the monthly payment as a percentage of your real take-home pay.</p>
 </header>
 
 <div class="work">
@@ -112,6 +142,20 @@ export function mortgagePage() {
 </div>
 
 <article>
+  <h2>What mortgage can I get on my salary?</h2>
+  <p>UK lenders commonly start with a loan of around 4 to 4.5 times the applicants' combined gross income. Some lend 5 times income or more in narrower cases. That first number is only a ceiling: the deposit, regular debts, loan term, interest rate and the lender's own affordability test can all reduce it.</p>
+  ${salaryBorrowingTable()}
+
+  <h2>How many times my salary can I borrow?</h2>
+  <p><strong>4.5 times household income is a useful upper estimate, not a promise.</strong> At that multiple, a £30,000 salary points to a £135,000 mortgage, £40,000 to £180,000 and £50,000 to £225,000 before the lender checks the rest of the application. Use the calculator above for a payment and deposit check rather than relying on the multiple alone.</p>
+
+  <h2>What salary do I need for a £200,000 or £250,000 mortgage?</h2>
+  <p>At 4.5 times income, a £200,000 mortgage needs roughly £44,445 of combined gross income and a £250,000 mortgage roughly £55,556. A lender can require more if you have debts, dependants, a short term or other committed spending.</p>
+  ${requiredIncomeTable()}
+
+  <h2>What percentage of salary should go on a mortgage?</h2>
+  <p>There is no universal safe percentage because the payment comes from take-home pay while lenders quote income multiples against gross pay. This calculator shows the payment as a share of net monthly income and also tests the payment at a rate ${STRESS_UPLIFT} percentage points higher. That makes two salaries with the same gross borrowing limit easier to compare honestly.</p>
+
   <h2>The multiple is a ceiling, not a target</h2>
   <p>Regulators cap lending at <strong>4.5 times income</strong> for all but 15% of a lender's new mortgages, so most people are quoted a maximum of 4.5x and treat it as the budget. Run the numbers at that maximum and the monthly payment comes to <strong>36% of take-home pay at £30,000, rising to 49% at £150,000</strong>. It rises with income, because the multiple is applied to gross while the payment comes out of net. Push it through the stress test and it reaches two thirds.</p>
   <p>That is not a coincidence, it is what the ceiling means: it is the point at which lending stops, not the point at which it is comfortable. If you want the payment under a third of your net pay, you are looking at roughly 3.5x, not 4.5x. The full arithmetic is in <a href="${BASE}/insights/four-and-a-half-times-income/">4.5&times; is a ceiling, not a budget</a>.</p>
@@ -127,18 +171,35 @@ export function mortgagePage() {
 </article>`;
 
   return shell({
-    title: `Mortgage Affordability Calculator ${YEAR_LABEL} — What You Can Borrow`,
-    description: `Work out what a UK lender will lend you and whether you can afford it, measured against your real take-home pay rather than gross salary. Includes the ${STRESS_UPLIFT}-point stress test.`,
+    title: `How Much Mortgage Can I Afford on My Salary? UK ${YEAR_LABEL}`,
+    description: `UK mortgage calculator based on salary, deposit, debts and take-home pay. Estimate what you can borrow, monthly payments and the income needed for a mortgage.`,
     canonical: url("/mortgage/"),
     body,
     script: mortgageScript(),
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      name: `Mortgage Affordability Calculator ${YEAR_LABEL}`,
-      applicationCategory: "FinanceApplication",
-      operatingSystem: "Any",
-      offers: { "@type": "Offer", price: "0", priceCurrency: "GBP" },
+      "@graph": [{
+        "@type": "WebApplication",
+        name: `UK Mortgage Calculator by Salary ${YEAR_LABEL}`,
+        applicationCategory: "FinanceApplication",
+        operatingSystem: "Any",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "GBP" },
+      }, {
+        "@type": "FAQPage",
+        mainEntity: [{
+          "@type": "Question",
+          name: "How much mortgage can I afford on my salary?",
+          acceptedAnswer: { "@type": "Answer", text: "A rough UK starting point is 4 to 4.5 times combined gross income, but deposit, debts, interest rate, loan term and lender affordability checks can reduce the amount." },
+        }, {
+          "@type": "Question",
+          name: "How much income do I need for a £200,000 mortgage?",
+          acceptedAnswer: { "@type": "Answer", text: "At a 4.5 times income multiple, a £200,000 mortgage requires about £44,445 of combined gross annual income before other affordability checks." },
+        }, {
+          "@type": "Question",
+          name: "How much income do I need for a £250,000 mortgage?",
+          acceptedAnswer: { "@type": "Answer", text: "At a 4.5 times income multiple, a £250,000 mortgage requires about £55,556 of combined gross annual income before other affordability checks." },
+        }],
+      }],
     },
   });
 }

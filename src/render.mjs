@@ -289,15 +289,43 @@ ${rows}
 export function salaryPage(salary, neighbours) {
   const r = takeHome({ salary });
   const pretty = "£" + salary.toLocaleString("en-GB");
+  const grossHourly = salary / (52 * 37.5);
+  const netHourly = r.net / (52 * 37.5);
+  const hourly = (amount) => amount.toLocaleString("en-GB", {
+    style: "currency", currency: "GBP", minimumFractionDigits: 2, maximumFractionDigits: 2,
+  });
+
+  const searchSummary = `
+<article class="salary-search-summary">
+  <h2>What is ${pretty} after tax per month?</h2>
+  <p>On standard PAYE in ${YEAR_LABEL}, ${pretty} leaves <strong>${money(r.monthly)} a month</strong>, ${money(r.weekly)} a week and ${money(r.net)} a year after Income Tax and employee National Insurance. Pension contributions and student loans are not included in that headline figure; add them in the calculator above if they apply to you.</p>
+  <div class="raise">
+    <table>
+      <caption>${pretty} salary: take-home and hourly pay</caption>
+      <tbody>
+        <tr><th scope="row">Gross annual salary</th><td class="num">${pretty}</td></tr>
+        <tr><th scope="row">Take-home per year</th><td class="num keep">${money(r.net)}</td></tr>
+        <tr><th scope="row">Take-home per month</th><td class="num keep">${money(r.monthly)}</td></tr>
+        <tr><th scope="row">Take-home per week</th><td class="num">${money(r.weekly)}</td></tr>
+        <tr><th scope="row">Gross hourly rate (37.5 hours)</th><td class="num">${hourly(grossHourly)}</td></tr>
+        <tr><th scope="row">Approximate hourly take-home</th><td class="num">${hourly(netHourly)}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>What is the hourly rate for a ${pretty} salary?</h3>
+  <p>Using a 37.5-hour working week, ${pretty} is about <strong>${hourly(grossHourly)} an hour gross</strong> and ${hourly(netHourly)} an hour after Income Tax and employee National Insurance. Actual hourly pay depends on contracted hours and unpaid overtime.</p>
+  <p><a href="${BASE}/mortgage/">See how much mortgage a ${pretty} salary may support &rarr;</a></p>
+</article>`;
 
   const body = `
 <p class="crumb"><a href="${BASE}/">Calculator</a> / <a href="${BASE}/salaries/">Every salary</a> / ${pretty}</p>
 <header class="masthead">
   <p class="eyebrow">Tax year ${YEAR_LABEL}</p>
-  <h1>${pretty} after tax</h1>
+  <h1>${pretty} after tax <em>in the UK</em></h1>
   <p class="verdict">${situation(salary, r)}</p>
 </header>
 ${calculatorForm(salary)}
+${searchSummary}
 ${raiseTable(salary)}
 <ul class="neighbours">
   ${neighbours.map((n) => `<li><a href="${BASE}/salary/${n}/">£${n.toLocaleString("en-GB")} after tax</a></li>`).join("\n  ")}
@@ -305,7 +333,7 @@ ${raiseTable(salary)}
 ${EXPLAINER}`;
 
   return shell({
-    title: `${pretty} After Tax ${YEAR_LABEL} — Take-Home Pay`,
+    title: `${pretty} After Tax in the UK ${YEAR_LABEL} — Monthly Take-Home`,
     description: `${pretty} a year is ${money(r.net)} after tax, or ${money(r.monthly)} a month, for ${YEAR_LABEL}. Full breakdown of income tax, National Insurance and your marginal rate.`,
     canonical: url(`/salary/${salary}/`),
     body,
@@ -318,6 +346,20 @@ ${EXPLAINER}`;
         acceptedAnswer: {
           "@type": "Answer",
           text: `${pretty} a year is ${money(r.net)} after tax and National Insurance in ${YEAR_LABEL}, which is ${money(r.monthly)} a month. Income tax takes ${money(r.incomeTax)} and National Insurance ${money(r.nationalInsurance)}.`,
+        },
+      }, {
+        "@type": "Question",
+        name: `What is ${pretty} after tax per month?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${pretty} a year leaves about ${money(r.monthly)} a month after Income Tax and employee National Insurance in ${YEAR_LABEL}, before pension contributions or student loan repayments.`,
+        },
+      }, {
+        "@type": "Question",
+        name: `What is the hourly rate for a ${pretty} salary?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `At 37.5 hours a week, ${pretty} is about ${hourly(grossHourly)} gross an hour and ${hourly(netHourly)} an hour after Income Tax and employee National Insurance.`,
         },
       }],
     },

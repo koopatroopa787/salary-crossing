@@ -20,10 +20,13 @@ import { shell } from "./render.mjs";
 const usd = (n) => "$" + Math.round(n).toLocaleString("en-US");
 const pence = (net) => `${Math.round(net / 10)}p`;
 
+const PUBLISHED = "2026-09-05";
+
 const article = ({ slug, title, description, eyebrow, h1, standfirst, body }) => ({
   slug,
   title,
   description,
+  datePublished: PUBLISHED,
   h1: h1.replace(/<[^>]+>/g, ""),
   render: () => shell({
     title,
@@ -35,8 +38,10 @@ const article = ({ slug, title, description, eyebrow, h1, standfirst, body }) =>
       "@type": "Article",
       headline: h1.replace(/<[^>]+>/g, ""),
       description,
-      datePublished: "2026-09-05",
+      datePublished: PUBLISHED,
+      dateModified: PUBLISHED,
       isAccessibleForFree: true,
+      author: { "@type": "Organization", name: "Salary Crossing" },
       publisher: { "@type": "Organization", name: "Salary Crossing" },
     },
     body: `

@@ -131,7 +131,15 @@ ${cards}
 </section>
 
 <article>
-  <h2>Why four countries and not a hundred and fifty</h2>
+  <h2>What does Salary Crossing compare?</h2>
+  <ul>
+    <li>The salary needed to match your take-home pay in another country or US state.</li>
+    <li>Income tax and compulsory payroll charges, calculated from published rates.</li>
+    <li>Your own housing, healthcare, childcare, transport and other monthly costs.</li>
+    <li>Pensions, Australian superannuation and UAE end-of-service benefits, shown separately from spendable pay.</li>
+  </ul>
+
+  <h2>Why six tax systems and not a hundred and fifty</h2>
   <p>Other sites advertise salary comparisons for 150 countries. Nobody maintains 150 tax codes accurately, and a plausible-looking wrong tax figure is worse than a smaller set of figures you can verify.</p>
   <p>Every jurisdiction here is encoded from its own tax authority's published rates, linked at the bottom of every comparison, and covered by tests that assert the authorities' own worked examples rather than whatever the code happens to produce. New York uses the State's own annual schedule so that the supplemental tax which claws back the lower brackets above $107,650 is included &mdash; most calculators quietly skip it and understate New York by thousands.</p>
 
@@ -149,7 +157,7 @@ ${cards}
 
   return shell({
     title: `Salary Crossing — What Your Pay Is Worth Abroad`,
-    description: `Work out the salary you would need abroad to keep what you keep now. Accurate after-tax comparisons for the UK, New York, California, Texas, Dubai and Australia, every rate sourced.`,
+    description: `Compare salaries after tax across the UK, Dubai, Australia, New York, California and Texas, with sourced rates and your own living costs.`,
     canonical: url("/"),
     body,
     script: script(rates),

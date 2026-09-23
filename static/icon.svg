@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Salary Crossing">
+  <rect width="128" height="128" rx="26" fill="#102922"/>
+  <path d="M28 44h57l-11-11 8-8 25 25-25 25-8-8 11-11H28z" fill="#79d9ba"/>
+  <path d="M100 84H43l11 11-8 8-25-25 25-25 8 8-11 11h57z" fill="#f4e9d0"/>
+</svg>

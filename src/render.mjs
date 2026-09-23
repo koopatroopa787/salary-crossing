@@ -29,6 +29,27 @@ const FONTS = "https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wgh
 export const BEACON = `<script>try{navigator.sendBeacon("/hit?p="+encodeURIComponent(location.pathname)+"&r="+encodeURIComponent(document.referrer))}catch(e){}</script>`;
 
 export function shell({ title, description, canonical, body, jsonLd, script }) {
+  const pageNodes = jsonLd
+    ? (jsonLd["@graph"] ?? [{ ...jsonLd, "@context": undefined }])
+    : [];
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [{
+      "@type": "Organization",
+      "@id": `${ORIGIN}${BASE}/#organization`,
+      name: SITE_NAME,
+      url: `${ORIGIN}${BASE}/`,
+      logo: `${ORIGIN}${BASE}/icon.svg`,
+      email: CONTACT,
+    }, {
+      "@type": "WebSite",
+      "@id": `${ORIGIN}${BASE}/#website`,
+      name: SITE_NAME,
+      url: `${ORIGIN}${BASE}/`,
+      publisher: { "@id": `${ORIGIN}${BASE}/#organization` },
+    }, ...pageNodes],
+  };
+
   return `<!doctype html>
 <html lang="en-GB">
 <head>
@@ -36,7 +57,10 @@ export function shell({ title, description, canonical, body, jsonLd, script }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
+<meta name="author" content="${esc(AUTHOR.name || SITE_NAME)}">
 <link rel="canonical" href="${canonical}">
+<link rel="icon" href="${BASE}/icon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="${esc(SITE_NAME)} analysis" href="${ORIGIN}${BASE}/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS}">
@@ -50,7 +74,10 @@ export function shell({ title, description, canonical, body, jsonLd, script }) {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>` : ""}
+<meta name="twitter:title" content="${esc(title)}">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="${ORIGIN}${BASE}/og.png">
+<script type="application/ld+json">${JSON.stringify(structuredData)}</script>
 </head>
 <body>
 <div class="shell">

@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Salary Crossing Adviser maintenance daily
+
+[Timer]
+OnCalendar=*-*-* 02:35:00 Europe/London
+Persistent=true
+RandomizedDelaySec=15m
+
+[Install]
+WantedBy=timers.target

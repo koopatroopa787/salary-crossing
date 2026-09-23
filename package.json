@@ -1,0 +1,17 @@
+{
+  "name": "salary-crossing",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test src/*.test.mjs app/*.test.mjs",
+    "audit": "node audit.mjs",
+    "app": "node app/server.mjs",
+    "app:setup": "node app/cli.mjs setup",
+    "app:backup": "node app/backup.mjs",
+    "app:purge": "node app/cli.mjs purge-expired"
+  }
+}

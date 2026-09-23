@@ -1,0 +1,17 @@
+[Unit]
+Description=Salary Crossing Adviser encrypted backup and retention cleanup
+
+[Service]
+Type=oneshot
+User=salarycrossing
+Group=salarycrossing
+WorkingDirectory=/opt/ukcalc
+EnvironmentFile=/etc/salarycrossing-adviser.env
+ExecStart=/usr/bin/node app/backup.mjs
+ExecStartPost=/usr/bin/node app/cli.mjs purge-expired
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/salarycrossing-adviser /var/backups/salarycrossing-adviser

@@ -1,0 +1,29 @@
+[Unit]
+Description=Salary Crossing Adviser workspace
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=salarycrossing
+Group=salarycrossing
+WorkingDirectory=/opt/ukcalc
+EnvironmentFile=/etc/salarycrossing-adviser.env
+ExecStart=/usr/bin/node app/server.mjs
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadWritePaths=/var/lib/salarycrossing-adviser /var/backups/salarycrossing-adviser
+
+[Install]
+WantedBy=multi-user.target

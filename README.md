@@ -39,6 +39,20 @@ A US state that hasn't been encoded throws rather than quietly returning a numbe
 - **Shareable and embeddable comparisons.** A copied link restores the selected salary and costs, while publishers can configure a free iframe from `/use-our-numbers/`.
 - **Retirement value stays separate.** Comparison pages distinguish spendable take-home from scheme-dependent pension, employer-funded Australian super and UAE end-of-service benefits instead of presenting all compulsory money as lost.
 
+## Adviser workspace
+
+`app/` contains the private founding-pilot workspace for boutique global-mobility
+and relocation advisers. It uses the same deterministic country modules as the
+public site, with tenant-scoped cases, owner/adviser/reviewer roles, two approval
+gates, versioned case snapshots, encrypted retained documents, expiring signed
+document links, branded client reports, PDF export, comments and audit history.
+
+Document extraction treats uploaded text as untrusted data and returns source-
+bound suggestions with confidence values. The language model never calculates
+tax. Production document uploads remain disabled until malware scanning and the
+privacy/security review are complete. Deployment units and operational notes are
+in `app/deploy/`.
+
 ## Layout
 
     src/tax.mjs, rates.mjs        UK engine and 2026/27 rates
@@ -50,6 +64,7 @@ A US state that hasn't been encoded throws rather than quietly returning a numbe
     build.mjs                      generates public/
     audit.mjs                      technical SEO audit over the built output
     findings.mjs                   the computations behind the analysis pieces
+    app/                            private adviser workspace and tests
 
 ## Run it
 
@@ -57,7 +72,8 @@ A US state that hasn't been encoded throws rather than quietly returning a numbe
     node build.mjs                 # writes public/
     node audit.mjs                 # titles, canonicals, duplicates, orphans, click depth
 
-No dependencies — plain Node 18+.
+The static build uses plain Node 18+. The adviser workspace uses Node 22.13+ for
+the built-in SQLite module and has no package dependencies.
 
 ## Limits
 

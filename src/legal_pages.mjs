@@ -17,7 +17,7 @@ import { CONTACT, SITE_NAME, url } from "./site.mjs";
 import { shell, esc } from "./render.mjs";
 import { country, CODES } from "./compare.mjs";
 
-const UPDATED = "22 September 2026";
+const UPDATED = "23 September 2026";
 
 const page = (title, description, path, body) =>
   shell({ title, description, canonical: url(path), body, script: " " });
@@ -59,7 +59,7 @@ export function aboutPage() {
   <p>Exchange rates are European Central Bank daily reference rates and move constantly. The tax arithmetic does not.</p>
 
   <h2>Who runs it</h2>
-  <p>${SITE_NAME} is an independent project, not a company, and it is published anonymously. It is free, carries no advertising at the time of writing, sells nothing and takes no commission from anyone. Nobody pays for placement here because there is no placement to buy.</p>
+  <p>${SITE_NAME} is an independent project and the public calculators remain free, with no advertising or paid placement. A separate private <a href="/advisers/">adviser workspace</a> is being tested as a paid service for professional global-mobility work.</p>
   <p>You do not have to take the arithmetic on trust: every rate is sourced above, and if a figure looks wrong, say so at <a href="mailto:${CONTACT}">${CONTACT}</a> and the working will be shown.</p>
 </article>`);
 }
@@ -67,18 +67,18 @@ export function aboutPage() {
 export function privacyPage() {
   return page(
     "Privacy",
-    `What Salary Crossing collects, which is almost nothing: your salary is calculated in your own browser and never reaches the server.`,
+    `What the free Salary Crossing calculators collect. Calculator inputs stay in your browser; the separate adviser workspace has its own privacy notice.`,
     "/privacy/",
     `
 <header class="masthead">
   <p class="eyebrow">Privacy &middot; updated ${UPDATED}</p>
   <h1>Your salary never <em>leaves your device</em></h1>
-  <p class="standfirst">That is the whole policy in one line. The rest of this page explains what little else happens, in plain English rather than boilerplate.</p>
+  <p class="standfirst">That is the whole policy for the free public calculators. The private adviser workspace has accounts, case data and a <a href="https://app.salarycrossing.com/privacy">separate privacy notice</a>.</p>
 </header>
 
 <article>
   <h2>What you type is not collected, because it is never sent</h2>
-  <p>Every calculation on this site runs inside your own browser. The salary you enter, the countries you pick and the results you see are computed on your device and stay there. They are not transmitted to the server, not written to a database, and not logged. There is no account to create and nothing to sign in to.</p>
+  <p>Every calculation on the public site runs inside your own browser. The salary you enter, the countries you pick and the results you see are computed on your device and stay there. They are not transmitted to the server, not written to a database, and not logged. The public calculators have no account or sign-in.</p>
   <p>This is a structural fact, not a promise about how we behave: the pages are static files and the arithmetic ships to you as JavaScript. There is no server-side code that could receive a salary even if someone wanted it to.</p>
 
   <h2>What is recorded automatically</h2>
@@ -87,7 +87,7 @@ export function privacyPage() {
   <p>The server is an Oracle Cloud instance in the <strong>UK London</strong> region, so those logs stay in the United Kingdom.</p>
 
   <h2>No cookies, no tracking</h2>
-  <p>This site sets no cookies. There is no Google Analytics, no Meta pixel, no session tracking, no fingerprinting and no advertising at the time of writing. Nothing follows you between pages or between sites.</p>
+  <p>The public calculator site sets no cookies. There is no Google Analytics, no Meta pixel, no session tracking, no fingerprinting and no advertising at the time of writing. The adviser workspace uses a secure session cookie after sign-in, as described in its own notice.</p>
   <p>If advertising is ever added, it will involve third-party cookies and this page will be updated before it goes live, not after.</p>
 
   <h2>Third parties that can see your request</h2>
@@ -98,7 +98,7 @@ export function privacyPage() {
   </ul>
 
   <h2>Your rights</h2>
-  <p>Under UK GDPR you may ask what personal data is held about you, ask for it to be corrected or erased, and complain to the <a href="https://ico.org.uk/" rel="nofollow">Information Commissioner's Office</a>. In practice the only personal data here is your IP address in a server log, and there is no account or profile attached to it.</p>
+  <p>Under UK GDPR you may ask what personal data is held about you, ask for it to be corrected or erased, and complain to the <a href="https://ico.org.uk/" rel="nofollow">Information Commissioner's Office</a>. For the public calculators, the only personal data held is normally your IP address in a short-lived server log, with no account or profile attached.</p>
   <p>Requests and questions: <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
 
   <h2>Changes</h2>

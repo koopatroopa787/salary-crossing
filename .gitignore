@@ -1,3 +1,5 @@
 public/
 node_modules/
 stats-history.json
+.env
+var/

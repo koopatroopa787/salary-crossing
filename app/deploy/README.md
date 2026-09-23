@@ -10,6 +10,7 @@ Create a dedicated unprivileged account and private data directories:
 
 ```sh
 sudo useradd --system --home /var/lib/salarycrossing-adviser --shell /usr/sbin/nologin salarycrossing
+sudo install -d -o salarycrossing -g salarycrossing -m 0700 /var/lib/salarycrossing-adviser
 sudo install -d -o salarycrossing -g salarycrossing -m 0700 /var/lib/salarycrossing-adviser/documents
 sudo install -d -o salarycrossing -g salarycrossing -m 0700 /var/backups/salarycrossing-adviser
 sudo install -d -o www-data -g www-data -m 0755 /var/www/certbot
@@ -50,8 +51,8 @@ scrypt hash and is never written to the service environment file.
 sudo -u salarycrossing env $(sudo cat /etc/salarycrossing-adviser.env | xargs) \
   ADVISER_ADMIN_PASSWORD='<temporary-password>' \
   node /opt/ukcalc/app/cli.mjs setup \
-  --organization='Salary Crossing' --slug='salary-crossing' \
-  --name='Owner' --email='hello@salarycrossing.com'
+  --organization 'Salary Crossing' --slug salary-crossing \
+  --name Owner --email hello@salarycrossing.com
 ```
 
 ## Services and proxy

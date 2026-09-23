@@ -11,7 +11,7 @@ const csrf = (value) => `<input type="hidden" name="csrf" value="${e(value)}">`;
 
 export function layout({ title, session = null, csrfToken = "", body, notice = "" }) {
   const ownerLinks = session?.role === "owner" ? `<a href="/organization">Organisation</a><a href="/billing">Pilot</a>` : "";
-  const navigation = session ? `<nav><a href="/">Cases</a>${ownerLinks}<form method="post" action="/logout">${csrf(csrfToken)}<button class="link-button">Sign out</button></form></nav>` : "";
+  const navigation = session ? `<nav><a href="/">Cases</a>${ownerLinks}<a href="/account">Account</a><form method="post" action="/logout">${csrf(csrfToken)}<button class="link-button">Sign out</button></form></nav>` : "";
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light"><title>${e(title)} — Salary Crossing Adviser</title><link rel="stylesheet" href="/assets/app.css"></head><body>
   <header class="top"><a class="wordmark" href="/">Salary Crossing <span>Adviser</span></a>${navigation}</header>
   ${notice ? `<div class="notice" role="status">${e(notice)}</div>` : ""}<main>${body}</main>
@@ -34,6 +34,10 @@ function countryOptions(value) {
 
 export function newCaseView({ session, csrfToken, error = "" }) {
   return layout({ title: "New case", session, csrfToken, body: `<div class="narrow"><a class="back" href="/">← Cases</a><p class="eyebrow">New client case</p><h1>Start with the two locations</h1>${error ? `<p class="error">${e(error)}</p>` : ""}<form method="post" action="/cases" class="panel stack">${csrf(csrfToken)}<label>Internal reference<input name="reference" placeholder="SC-2026-001" maxlength="40" required></label><label>Client name<input name="clientName" maxlength="100" required></label><div class="two"><label>Current jurisdiction<select name="fromCode">${countryOptions("UK")}</select></label><label>Proposed jurisdiction<select name="toCode">${countryOptions("AE")}</select></label></div><button>Create case</button></form></div>` });
+}
+
+export function accountView({ session, csrfToken, notice = "", error = "" }) {
+  return layout({ title: "Account", session, csrfToken, notice, body: `<div class="narrow"><p class="eyebrow">Signed in as ${e(session.email)}</p><h1>Account security</h1><form method="post" action="/account/password" class="panel stack">${csrf(csrfToken)}${error ? `<p class="error">${e(error)}</p>` : ""}<label>Current password<input type="password" name="currentPassword" autocomplete="current-password" required></label><label>New password<input type="password" name="newPassword" autocomplete="new-password" minlength="12" required></label><label>Confirm new password<input type="password" name="confirmPassword" autocomplete="new-password" minlength="12" required></label><button>Update password</button><p class="small">Updating your password signs out every other session.</p></form></div>` });
 }
 
 function amountField(label, name, value, { required = false, help = "" } = {}) {

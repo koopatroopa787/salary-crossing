@@ -9,9 +9,9 @@ import { adviserPrivacyView, adviserTermsView, dataProcessingView, subprocessors
 import { textPdf } from "./pdf.mjs";
 import { calculateReport, normalizeInputs } from "./report.mjs";
 import { findCase, listCaseDocuments } from "./repository.mjs";
-import { cleanEmail, cleanText, expiredSessionCookie, nowIso, parseCookies, passwordMatches, safeEqual, sessionCookie, sha256, signedValue } from "./security.mjs";
+import { cleanEmail, cleanText, expiredSessionCookie, nowIso, parseCookies, passwordHash, passwordMatches, safeEqual, sessionCookie, sha256, signedValue } from "./security.mjs";
 import { deleteCaseDocuments, documentsForExtraction, readDocument, storeDocument } from "./storage.mjs";
-import { billingView, caseView, dashboardView, loginView, newCaseView, organizationView, reportView } from "./views.mjs";
+import { accountView, billingView, caseView, dashboardView, loginView, newCaseView, organizationView, reportView } from "./views.mjs";
 
 const APP_CSS = readFileSync(new URL("./app.css", import.meta.url));
 const FX_PATH = fileURLToPath(new URL("../fx-cache.json", import.meta.url));
@@ -248,6 +248,25 @@ async function handler(req, res) {
     const params = await form(req); requireCsrf(params, context);
     db.prepare("DELETE FROM sessions WHERE id_hash=?").run(sha256(context.rawSession));
     return redirect(res, "/login", { "Set-Cookie": expiredSessionCookie({ secure: config.origin.startsWith("https://") }) });
+  }
+  if (method === "GET" && url.pathname === "/account") {
+    return send(res, 200, accountView({ session, csrfToken, notice: url.searchParams.get("notice") ?? "" }));
+  }
+  if (method === "POST" && url.pathname === "/account/password") {
+    const params = await form(req); requireCsrf(params, context);
+    const user = db.prepare("SELECT * FROM users WHERE id=? AND organization_id=? AND disabled_at IS NULL").get(session.user_id, session.organization_id);
+    if (!user || !passwordMatches(params.get("currentPassword") ?? "", user.password_salt, user.password_hash)) {
+      return send(res, 400, accountView({ session, csrfToken, error: "The current password was not recognised." }));
+    }
+    const next = String(params.get("newPassword") ?? "");
+    if (next !== String(params.get("confirmPassword") ?? "")) {
+      return send(res, 400, accountView({ session, csrfToken, error: "The new passwords do not match." }));
+    }
+    const hashed = passwordHash(next);
+    db.prepare("UPDATE users SET password_salt=?,password_hash=? WHERE id=? AND organization_id=?").run(hashed.salt, hashed.hash, session.user_id, session.organization_id);
+    db.prepare("DELETE FROM sessions WHERE user_id=? AND id_hash<>?").run(session.user_id, sha256(context.rawSession));
+    audit(db, session, "account.password-changed", { ip: clientIp(req) });
+    return redirect(res, "/account?notice=Password updated; other sessions signed out");
   }
   if (method === "GET" && url.pathname === "/") {
     const cases = db.prepare("SELECT id,reference,client_name,status,updated_at FROM cases WHERE organization_id=? ORDER BY updated_at DESC").all(session.organization_id);

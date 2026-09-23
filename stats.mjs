@@ -17,7 +17,8 @@ import { fileURLToPath } from "node:url";
 const LOG = process.env.STATS_LOG ?? "/var/log/nginx/salarycrossing-hits.log";
 const HISTORY = process.env.STATS_HISTORY ?? fileURLToPath(new URL("./stats-history.json", import.meta.url));
 
-const BOT = /bot|crawl|spider|slurp|headless|lighthouse|preview|monitor|curl|wget|python|scrapy/i;
+const BOT = /bot|crawl|spider|slurp|headless|lighthouse|preview|monitor|curl|wget|python|scrapy|chatgpt-user|claude-web|anthropic|openai|perplexity|facebookexternalhit/i;
+const MAX_DAILY_VIEWS = 60;
 
 const decode = (s) => { try { return decodeURIComponent(s); } catch { return s; } };
 
@@ -43,7 +44,19 @@ const bump = (o, k) => { o[k] = (o[k] ?? 0) + 1; };
 export function tally(views) {
   const days = {};
   const seen = {};
+  const activity = {};
   for (const v of views) {
+    if (!v.event) {
+      const key = v.day + "|" + v.visitor;
+      activity[key] = (activity[key] ?? 0) + 1;
+    }
+  }
+  const automated = new Set(Object.entries(activity)
+    .filter(([, count]) => count > MAX_DAILY_VIEWS)
+    .map(([key]) => key));
+
+  for (const v of views) {
+    if (automated.has(v.day + "|" + v.visitor)) continue;
     const d = (days[v.day] ??= { views: 0, visitors: 0, pages: {}, refs: {}, countries: {}, events: {} });
     if (v.event) { bump(d.events, v.event); continue; }
     d.views++;

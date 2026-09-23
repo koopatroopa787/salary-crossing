@@ -209,14 +209,17 @@ import { affordability, STRESS_UPLIFT } from "${BASE}${assets.js}/mortgage.mjs";
 import { money } from "${BASE}${assets.js}/tax.mjs";
 
 const $ = (id) => document.getElementById(id);
-const num = (id) => Number($(id).value) || 0;
+const num = (id, min = 0, max = 10000000, fallback = 0) => {
+  const n = Number($(id).value);
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+};
 const VERDICT = { good: "Comfortable", tight: "Tight", over: "A stretch", none: "\\u2014" };
 
 function update() {
   const r = affordability({
     income1: num("income1"), income2: num("income2"), deposit: num("deposit"),
-    monthlyDebts: num("monthlyDebts"), rate: num("rate"),
-    termYears: num("termYears") || 25, multiple: Number($("multiple").value),
+    monthlyDebts: num("monthlyDebts", 0, 20000), rate: num("rate", 0, 20, 4.5),
+    termYears: num("termYears", 5, 40, 25), multiple: Number($("multiple").value),
   });
 
   $("m-price").textContent = money(r.price);
@@ -242,5 +245,15 @@ function update() {
 }
 
 $("m").addEventListener("input", update);
+$("m").addEventListener("change", (event) => {
+  const input = event.target;
+  if (input.matches('input[type="number"]')) {
+    const min = input.min === "" ? -Infinity : Number(input.min);
+    const max = input.max === "" ? Infinity : Number(input.max);
+    const value = Number(input.value);
+    input.value = String(Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : Number(input.defaultValue));
+    update();
+  }
+});
 update();
 </script>`;

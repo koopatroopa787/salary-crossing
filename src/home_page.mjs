@@ -239,13 +239,23 @@ function update() {
   $("retirement-rows").innerHTML = retirementHtml(c.from) + retirementHtml(c.to);
   if (useCosts) {
     const adjusted = matchAfterCosts({ gross, from, to, rate: RATES[from + ">" + to], fromCosts, toCosts });
-    $("a-need").textContent = fmt(adjusted.gross, b);
-    $("a-sub").textContent = "in " + b.cities[0] + " to keep the same after your costs";
-    $("answer").querySelector(".answer-lead").textContent = "To keep the same after costs, you need";
-    $("a-rows").innerHTML =
-      "<div><dt>Left each month now</dt><dd>" + fmt(adjusted.sourceDisposable / 12, a) + "</dd></div>" +
-      "<div><dt>Costs here / month</dt><dd>" + fmt(fromMonthly, a) + "</dd></div>" +
-      "<div><dt>Costs there / month</dt><dd>" + fmt(toMonthly, b) + "</dd></div>";
+    if (!adjusted.sourceCostsAffordable) {
+      $("a-need").textContent = "Costs exceed take-home";
+      $("a-sub").textContent = "Reduce the costs entered for " + a.cities[0] + " or increase the starting salary.";
+      $("answer").querySelector(".answer-lead").textContent = "Check your current monthly costs";
+      $("a-rows").innerHTML =
+        "<div><dt>Take-home each month</dt><dd>" + fmt(adjusted.sourceNet / 12, a) + "</dd></div>" +
+        "<div><dt>Costs entered here</dt><dd>" + fmt(fromMonthly, a) + "</dd></div>" +
+        "<div><dt>Monthly shortfall</dt><dd>" + fmt(Math.abs(adjusted.sourceDisposable) / 12, a) + "</dd></div>";
+    } else {
+      $("a-need").textContent = fmt(adjusted.gross, b);
+      $("a-sub").textContent = "in " + b.cities[0] + " to keep the same after your costs";
+      $("answer").querySelector(".answer-lead").textContent = "To keep the same after costs, you need";
+      $("a-rows").innerHTML =
+        "<div><dt>Left each month now</dt><dd>" + fmt(adjusted.sourceDisposable / 12, a) + "</dd></div>" +
+        "<div><dt>Costs here / month</dt><dd>" + fmt(fromMonthly, a) + "</dd></div>" +
+        "<div><dt>Costs there / month</dt><dd>" + fmt(toMonthly, b) + "</dd></div>";
+    }
   } else {
     $("a-need").textContent = fmt(c.to.gross, b);
     $("a-sub").textContent = "in " + b.cities[0] + ", versus " + fmt(gross, a) + " in " + a.cities[0];

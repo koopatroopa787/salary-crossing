@@ -7,8 +7,19 @@ const line = (p, r, ua = "Mozilla/5.0 Firefox", ip = "1.2.3.4", t = "2026-09-14T
 
 test("robots and junk paths are dropped", () => {
   assert.equal(parse(line("/", "", "Googlebot/2.1")), null);
+  assert.equal(parse(line("/", "", "ChatGPT-User/1.0")), null);
   assert.equal(parse(line("http://evil/", "")), null);
   assert.equal(parse(""), null);
+});
+
+test("a high-volume crawler with a browser user-agent is excluded", () => {
+  const crawler = Array.from({ length: 61 }, (_, i) =>
+    parse(line(`/salary/${15000 + i * 1000}/`, "", "Mozilla/5.0", "9.9.9.9")));
+  const human = parse(line("/", "", "Mozilla/5.0 Firefox", "1.2.3.4"));
+  const day = tally([...crawler, human])["2026-09-14"];
+  assert.equal(day.views, 1);
+  assert.equal(day.visitors, 1);
+  assert.deepEqual(day.pages, { "/": 1 });
 });
 
 test("referrers: reddit counted, own site ignored, empty is direct", () => {

@@ -21,14 +21,22 @@ export const MAX_LTV = 0.95;
 /** Lenders test you against a rate well above the one you're offered. */
 export const STRESS_UPLIFT = 3.0;
 
+const bounded = (value, min, max, fallback = min) => {
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+};
+
 /** Monthly capital-and-interest payment. */
 export function monthlyPayment(principal, annualRatePct, termYears) {
-  const n = Math.round(termYears * 12);
-  if (n <= 0 || principal <= 0) return 0;
-  const r = annualRatePct / 100 / 12;
-  if (r === 0) return principal / n;
+  const safePrincipal = bounded(principal, 0, 100_000_000);
+  const safeRate = bounded(annualRatePct, 0, 20);
+  const safeTerm = bounded(termYears, 0, 100);
+  const n = Math.round(safeTerm * 12);
+  if (n <= 0 || safePrincipal <= 0) return 0;
+  const r = safeRate / 100 / 12;
+  if (r === 0) return safePrincipal / n;
   const growth = Math.pow(1 + r, n);
-  return (principal * r * growth) / (growth - 1);
+  return (safePrincipal * r * growth) / (growth - 1);
 }
 
 export function affordability({
@@ -41,27 +49,34 @@ export function affordability({
   termYears = 25,
   region = "uk",
 } = {}) {
-  const householdIncome = Math.max(0, income1) + Math.max(0, income2);
+  const safeIncome1 = bounded(income1, 0, 10_000_000);
+  const safeIncome2 = bounded(income2, 0, 10_000_000);
+  const safeDeposit = bounded(deposit, 0, 10_000_000);
+  const safeDebts = bounded(monthlyDebts, 0, 20_000);
+  const safeMultiple = bounded(multiple, 1, 10, DEFAULT_MULTIPLE);
+  const safeRate = bounded(rate, 0, 20, 4.5);
+  const safeTerm = bounded(termYears, 5, 40, 25);
+  const householdIncome = safeIncome1 + safeIncome2;
 
   // Lenders knock existing commitments off the income before applying the
   // multiple: a £300 car payment costs you roughly £16,200 of borrowing.
-  const assessable = Math.max(0, householdIncome - monthlyDebts * 12);
-  const byIncome = assessable * multiple;
+  const assessable = Math.max(0, householdIncome - safeDebts * 12);
+  const byIncome = assessable * safeMultiple;
 
   // With a deposit D and a 95% cap, the largest loan is D/0.05 * 0.95.
-  const byDeposit = deposit > 0 ? (deposit / (1 - MAX_LTV)) * MAX_LTV : 0;
+  const byDeposit = safeDeposit > 0 ? (safeDeposit / (1 - MAX_LTV)) * MAX_LTV : 0;
 
   const loan = Math.max(0, Math.min(byIncome, byDeposit));
-  const price = loan + deposit;
+  const price = loan + safeDeposit;
   const ltv = price > 0 ? loan / price : 0;
   const limitedBy = byIncome <= byDeposit ? "income" : "deposit";
 
-  const payment = monthlyPayment(loan, rate, termYears);
-  const stressed = monthlyPayment(loan, rate + STRESS_UPLIFT, termYears);
+  const payment = monthlyPayment(loan, safeRate, safeTerm);
+  const stressed = monthlyPayment(loan, safeRate + STRESS_UPLIFT, safeTerm);
 
   // Net pay is per person, so two £30k earners keep more than one £60k earner.
   const netMonthly =
-    (takeHome({ salary: income1, region }).net + takeHome({ salary: income2, region }).net) / 12;
+    (takeHome({ salary: safeIncome1, region }).net + takeHome({ salary: safeIncome2, region }).net) / 12;
 
   const share = netMonthly > 0 ? payment / netMonthly : 0;
   const stressedShare = netMonthly > 0 ? stressed / netMonthly : 0;
@@ -70,17 +85,17 @@ export function affordability({
     householdIncome,
     assessable,
     loan,
-    deposit,
+    deposit: safeDeposit,
     price,
     ltv,
     limitedBy,
-    multiple,
+    multiple: safeMultiple,
     payment,
     stressed,
     netMonthly,
     share,
     stressedShare,
-    totalInterest: payment * termYears * 12 - loan,
+    totalInterest: payment * safeTerm * 12 - loan,
     ltvBand: ltvBand(ltv),
     verdict: verdict(share, stressedShare),
   };

@@ -27,6 +27,16 @@ test("the required salary matches disposable income after user costs", () => {
   });
   close(result.destinationDisposable, result.sourceDisposable * 1.95, "disposable income", 2);
   assert.ok(result.gross > 0);
+  assert.equal(result.sourceCostsAffordable, true);
+});
+
+test("costs above current take-home are identified instead of presented as a match", () => {
+  const result = matchAfterCosts({
+    gross: 30000, from: "UK", to: "AE", rate: 4.7,
+    fromCosts: { housing: 5000 },
+  });
+  assert.equal(result.sourceCostsAffordable, false);
+  assert.ok(result.sourceDisposable < 0);
 });
 
 test("shared links round-trip the visitor's non-zero costs", () => {

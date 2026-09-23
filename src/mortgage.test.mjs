@@ -90,3 +90,16 @@ test("no income, no deposit, no crash", () => {
   assert.equal(r.verdict.level, "none");
   assert.ok(Number.isFinite(r.ltv));
 });
+
+test("typed values outside the form limits are safely bounded", () => {
+  const r = affordability({
+    income1: "not a number", income2: -50000, deposit: -1000,
+    monthlyDebts: -300, rate: -5, termYears: 500, multiple: 999,
+  });
+  assert.equal(r.householdIncome, 0);
+  assert.equal(r.deposit, 0);
+  assert.equal(r.loan, 0);
+  assert.equal(r.multiple, 10);
+  assert.ok(Number.isFinite(r.payment));
+  assert.ok(Number.isFinite(r.totalInterest));
+});

@@ -44,6 +44,7 @@ export function matchAfterCosts({ gross, from, to, rate, fromCosts = {}, toCosts
     sourceAnnualCosts,
     destinationAnnualCosts,
     sourceDisposable,
+    sourceCostsAffordable: sourceDisposable >= 0,
     destinationDisposable: destination.net - destinationAnnualCosts,
     exact: targetDestinationNet > 0 || sourceDisposable * rate + destinationAnnualCosts === 0,
   };

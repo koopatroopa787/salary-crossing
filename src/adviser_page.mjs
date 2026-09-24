@@ -31,6 +31,12 @@ export function adviserPage() {
     <li>Unsupported circumstances that require tax, immigration or legal review.</li>
     <li>The exchange-rate date, tax-year version, source links and adviser-approved assumptions.</li>
   </ul>
+  <h2>Review the output before starting a pilot</h2>
+  <p>The demonstrations use fictional case facts and the live calculation engine. They show the package table, household-cost layer, one, three and five-year outcomes, assumptions, review questions and calculation record without presenting invented data as a customer result.</p>
+  <div class="adviser-resource-links">
+    <a href="/advisers/sample-reports/"><strong>Open three sample reports</strong><span>London to Dubai, Sydney and New York</span></a>
+    <a href="/advisers/resources/"><strong>Read the adviser field guides</strong><span>Evidence, approvals and transparent assumptions</span></a>
+  </div>
   <h2>Designed for a paid validation, not an endless free trial</h2>
   <p>The founding pilot costs £149 for five cases over 30 days. We will measure preparation time, extraction corrections and whether the report is suitable to send to a client. The wider product will only be built if real advisers pay, use it on real cases and return with another case.</p>
   <p class="route-cta"><a href="mailto:hello@salarycrossing.com?subject=Salary%20Crossing%20adviser%20pilot">Discuss a pilot case &rarr;</a></p>

@@ -13,6 +13,9 @@ test("approved values drive one, three and five-year scenarios", () => {
   }, fx);
   assert.deepEqual(report.scenarios.map((row) => row.years), [1, 3, 5]);
   assert.ok(report.to.retirementValue > 0, "Australian employer super is part of total value");
+  assert.equal(report.from.spendable, report.from.pay.net - report.from.annualCosts);
+  assert.equal(report.to.spendable, report.to.pay.net - report.to.annualCosts);
+  assert.equal(report.spendableDifference, report.to.spendableInSource - report.from.spendable);
   assert.ok(report.sources.some((source) => source.url.includes("ato.gov.au")));
   assert.ok(report.warnings.some((warning) => warning.includes("Equity tax treatment")));
   assert.equal(report.inputs.assumptions[0], "Bonus paid at target");

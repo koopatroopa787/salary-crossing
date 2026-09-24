@@ -6,7 +6,7 @@ import { configuration, validateProductionConfig } from "./config.mjs";
 import { audit, createSession, currentSession, openDatabase } from "./db.mjs";
 import { extractCaseData } from "./llm.mjs";
 import { adviserPrivacyView, adviserTermsView, dataProcessingView, subprocessorsView } from "./legal_views.mjs";
-import { textPdf } from "./pdf.mjs";
+import { compensationReportPdf } from "./pdf.mjs";
 import { calculateReport, normalizeInputs } from "./report.mjs";
 import { findCase, listCaseDocuments } from "./repository.mjs";
 import { cleanEmail, cleanText, expiredSessionCookie, nowIso, parseCookies, passwordHash, passwordMatches, safeEqual, sessionCookie, sha256, signedValue } from "./security.mjs";
@@ -148,28 +148,6 @@ function inputFromForm(params) {
     assumptions: String(params.get("assumptions") ?? "").split(/\r?\n/),
     unsupported: String(params.get("unsupported") ?? "").split(/\r?\n/),
   });
-}
-
-function pdfLines(item, report) {
-  const m = (number, meta) => `${meta.currency} ${Math.round(number).toLocaleString("en-GB")}`;
-  return [
-    `Case: ${item.reference} — ${item.client_name}`, `Calculation version: ${report.calculationVersion}`,
-    `Tax years: ${report.from.name} ${report.taxYears.from}; ${report.to.name} ${report.taxYears.to}`,
-    `Exchange-rate date: ${report.fxDate}`, "",
-    `CURRENT — ${report.from.name}`, `Salary and cash bonus: ${m(report.from.pay.gross, report.from)}`,
-    `Tax and compulsory charges: ${m(report.from.pay.totalDeductions, report.from)}`,
-    `Annual household costs: ${m(report.from.annualCosts, report.from)}`, `Recurring package value: ${m(report.from.recurringValue, report.from)}`, "",
-    `PROPOSED — ${report.to.name}`, `Salary and cash bonus: ${m(report.to.pay.gross, report.to)}`,
-    `Tax and compulsory charges: ${m(report.to.pay.totalDeductions, report.to)}`,
-    `Annual household costs: ${m(report.to.annualCosts, report.to)}`, `Recurring package value: ${m(report.to.recurringValue, report.to)}`, "",
-    `Equivalent destination gross before costs: ${m(report.equivalentDestinationGross, report.to)}`,
-    `Equivalent destination gross after adviser-entered costs: ${m(report.costAdjustedDestinationGross, report.to)}`,
-    ...report.scenarios.map((row) => `${row.years}-year difference in ${report.from.currency}: ${Math.round(row.difference).toLocaleString("en-GB")}`),
-    "", "ASSUMPTIONS", ...(report.inputs.assumptions.length ? report.inputs.assumptions : ["No additional adviser assumptions recorded."]),
-    "", "LIMITATIONS", ...report.warnings,
-    "", "SOURCES", ...report.sources.map((source) => `${source.jurisdiction}: ${source.label} — ${source.url}`),
-    "", "This estimate supports adviser review and is not personal tax, legal or immigration advice.",
-  ];
 }
 
 async function stripeCheckout(session) {
@@ -319,7 +297,8 @@ async function handler(req, res) {
     }
     if (method === "GET" && action === "report.pdf") {
       if (!data.item.input_approved_at) return send(res, 409, "Inputs are not approved.", "text/plain");
-      const report = reportFor(data.item); const pdf = textPdf(pdfLines(data.item, report), { title: `${session.brand_name} — international compensation report` });
+      const report = reportFor(data.item);
+      const pdf = compensationReportPdf({ item: data.item, report, brandName: session.brand_name, brandColor: session.brand_color });
       audit(db, session, "report.downloaded", { caseId, ip: clientIp(req) });
       return send(res, 200, pdf, "application/pdf", { "Content-Disposition": `attachment; filename="${data.item.reference.replace(/[^a-z0-9_-]/gi, "_")}-report.pdf"` });
     }

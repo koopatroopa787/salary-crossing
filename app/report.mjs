@@ -54,9 +54,12 @@ export function calculateReport(rawInputs, fx) {
   const toRetirement = inputs.to.employerPension || Number(toPay.retirement?.amount) || 0;
   const fromAnnualCosts = monthlyCosts(inputs.from.costs) * 12;
   const toAnnualCosts = monthlyCosts(inputs.to.costs) * 12;
+  const fromSpendable = fromPay.net - fromAnnualCosts;
+  const toSpendable = toPay.net - toAnnualCosts;
   const fromRecurring = fromPay.net - fromAnnualCosts + inputs.from.equity + fromRetirement + inputs.from.benefits;
   const toRecurring = toPay.net - toAnnualCosts + inputs.to.equity + toRetirement + inputs.to.benefits;
   const toRecurringInFrom = toRecurring / rate;
+  const toSpendableInFrom = toSpendable / rate;
   const equivalence = compare({ gross: fromTaxable, from: inputs.from.code, to: inputs.to.code, rate });
   const costAdjusted = matchAfterCosts({
     gross: fromTaxable, from: inputs.from.code, to: inputs.to.code, rate,
@@ -70,8 +73,9 @@ export function calculateReport(rawInputs, fx) {
   return {
     inputs, rate, fxDate: fx.date, calculationVersion: CALCULATION_VERSION,
     taxYears: { from: from.meta.year, to: to.meta.year },
-    from: { ...from.meta, pay: fromPay, retirementValue: fromRetirement, annualCosts: fromAnnualCosts, recurringValue: fromRecurring },
-    to: { ...to.meta, pay: toPay, retirementValue: toRetirement, annualCosts: toAnnualCosts, recurringValue: toRecurring, recurringValueInSource: toRecurringInFrom },
+    from: { ...from.meta, pay: fromPay, retirementValue: fromRetirement, annualCosts: fromAnnualCosts, spendable: fromSpendable, recurringValue: fromRecurring },
+    to: { ...to.meta, pay: toPay, retirementValue: toRetirement, annualCosts: toAnnualCosts, spendable: toSpendable, spendableInSource: toSpendableInFrom, recurringValue: toRecurring, recurringValueInSource: toRecurringInFrom },
+    spendableDifference: toSpendableInFrom - fromSpendable,
     difference: toRecurringInFrom - fromRecurring,
     equivalentDestinationGross: equivalence.to.gross,
     costAdjustedDestinationGross: costAdjusted.gross,

@@ -34,13 +34,17 @@ ADVISER_BACKUP_RETENTION_DAYS=30
 ADVISER_MASTER_KEY=<32-byte-base64-key>
 ADVISER_SESSION_SECRET=<independent-random-secret>
 ADVISER_DOCUMENT_UPLOADS_ENABLED=0
-ADVISER_LLM_MODEL=gpt-5-mini
+ADVISER_LLM_API_KEY=<provider-api-key>
+ADVISER_LLM_MODEL=deepseek-flash
+ADVISER_LLM_URL=https://api.deepseek.com/responses
 ```
 
 Keep document uploads disabled until ClamAV is current and the privacy/security
-review is complete. Add `OPENAI_API_KEY` only for an enterprise API account whose
-data controls meet the published subprocessor terms. Add the Stripe variables
-only after creating the founding-pilot price and webhook endpoint.
+review is complete. Before processing client documents with DeepSeek, verify the
+model-training opt-out, disclose processing in China, obtain an appropriate lawful
+basis and complete the international-transfer review. `OPENAI_API_KEY` remains a
+legacy fallback for existing installations. Add the Stripe variables only after
+creating the founding-pilot price and webhook endpoint.
 
 ## First owner
 

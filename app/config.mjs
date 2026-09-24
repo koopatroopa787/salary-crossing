@@ -16,7 +16,7 @@ export function configuration(env = process.env) {
     masterKey: env.ADVISER_MASTER_KEY ?? "",
     sessionSecret: env.ADVISER_SESSION_SECRET ?? "",
     setupToken: env.ADVISER_SETUP_TOKEN ?? "",
-    llmApiKey: env.OPENAI_API_KEY ?? "",
+    llmApiKey: env.ADVISER_LLM_API_KEY ?? env.OPENAI_API_KEY ?? "",
     llmModel: env.ADVISER_LLM_MODEL ?? "gpt-5-mini",
     llmBaseUrl: env.ADVISER_LLM_URL ?? "https://api.openai.com/v1/responses",
     stripeSecretKey: env.STRIPE_SECRET_KEY ?? "",

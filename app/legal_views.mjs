@@ -1,6 +1,6 @@
 import { layout } from "./views.mjs";
 
-const updated = "23 September 2026";
+const updated = "24 September 2026";
 const contact = `<a href="mailto:hello@salarycrossing.com">hello@salarycrossing.com</a>`;
 
 function legal(title, introduction, content) {
@@ -11,9 +11,9 @@ export function adviserPrivacyView() {
   return legal("Adviser privacy notice", "This notice covers the private Salary Crossing Adviser workspace. The free public calculators have a separate privacy notice.", `
   <h2>Roles and responsibility</h2><p>Your adviser organisation decides why client information is entered and is normally the controller for that client data. Salary Crossing processes it to provide the workspace. Salary Crossing is controller for account, billing, service-security and support information.</p>
   <h2>Information handled</h2><p>The service stores account details, organisation settings, case values, adviser notes, comments, audit events and approved reports. When document retention is enabled, it may also store payslips, offer letters, benefits documents and relocation policies supplied by an authorised adviser.</p>
-  <h2>How information is used</h2><p>Information is used to authenticate users, run deterministic calculations, extract facts when AI extraction is requested, produce reports, protect the service, support customers and administer billing. Client data is not used to train general-purpose AI models or for advertising.</p>
+  <h2>How information is used</h2><p>Information is used to authenticate users, run deterministic calculations, extract facts when AI extraction is requested, produce reports, protect the service, support customers and administer billing. Salary Crossing does not use client data for advertising. AI extraction for retained client documents remains disabled while the configured provider's model-training opt-out and international-transfer safeguards are verified.</p>
   <h2>Security and retention</h2><p>Files are malware-scanned before acceptance, encrypted at rest and isolated by organisation. Original document text is decrypted only while an authorised request is processed and is not retained as a second plaintext copy. Access and report-sharing events are audited. Closed-case documents default to deletion after 12 months. An authorised user can delete a case earlier; encrypted backups expire within 30 days.</p>
-  <h2>Providers and international processing</h2><p>The current provider list and processing purpose are published on the <a href="/subprocessors">subprocessors page</a>. AI extraction remains off unless an organisation enables it. Only text required for the requested extraction is sent to the configured provider.</p>
+  <h2>Providers and international processing</h2><p>The current provider list, location and processing purpose are published on the <a href="/subprocessors">subprocessors page</a>. AI extraction for retained client documents remains off until the production review is complete. When enabled, only text required for the requested extraction will be sent to the configured provider after the adviser organisation has been informed of the transfer.</p>
   <h2>Your choices and rights</h2><p>Organisation owners can correct case data, revoke client links and delete cases. For access, correction, deletion, restriction or objection requests, contact the adviser organisation first or email ${contact}. You may also complain to the UK Information Commissioner.</p>`);
 }
 
@@ -41,7 +41,7 @@ export function subprocessorsView() {
   <table><thead><tr><th>Provider</th><th>Purpose</th><th>Data involved</th></tr></thead><tbody>
   <tr><td>Oracle Cloud Infrastructure</td><td>Application, encrypted storage and database hosting in the London region</td><td>Account, case, document and audit data</td></tr>
   <tr><td>Cloudflare</td><td>DNS, transport security and abuse protection</td><td>IP address and request metadata</td></tr>
-  <tr><td>OpenAI, when enabled by the organisation</td><td>Structured extraction from selected document text</td><td>Relevant document text sent for extraction</td></tr>
+  <tr><td><a href="https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html">DeepSeek</a> (test configuration; client-document use disabled)</td><td>Structured extraction from synthetic test text while production data safeguards are reviewed; processing is stated to occur in the People's Republic of China</td><td>No retained client documents are sent in the current configuration</td></tr>
   <tr><td>Stripe, when online billing is enabled</td><td>Pilot payment processing</td><td>Organisation contact and payment metadata; card details remain with Stripe</td></tr>
   </tbody></table><p>Questions about provider configuration or data location: ${contact}.</p>`);
 }

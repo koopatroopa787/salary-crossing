@@ -11,7 +11,7 @@
  * claim is not backed by a table on the page, it should not be on the page.
  */
 import { takeHome, money } from "./tax.mjs";
-import { affordability } from "./mortgage.mjs";
+import { affordability, STRESS_UPLIFT } from "./mortgage.mjs";
 import { country } from "./compare.mjs";
 import { YEAR_LABEL } from "./rates.mjs";
 import { BASE, url } from "./site.mjs";
@@ -22,7 +22,7 @@ const pence = (net) => `${Math.round(net / 10)}p`;
 
 const PUBLISHED = "2026-09-05";
 
-const article = ({ slug, title, description, eyebrow, h1, standfirst, body }) => ({
+const article = ({ slug, title, description, eyebrow, h1, standfirst, body, dateModified = PUBLISHED }) => ({
   slug,
   title,
   description,
@@ -39,7 +39,7 @@ const article = ({ slug, title, description, eyebrow, h1, standfirst, body }) =>
       headline: h1.replace(/<[^>]+>/g, ""),
       description,
       datePublished: PUBLISHED,
-      dateModified: PUBLISHED,
+      dateModified,
       isAccessibleForFree: true,
       author: { "@type": "Organization", name: "Salary Crossing" },
       publisher: { "@type": "Organization", name: "Salary Crossing" },
@@ -183,26 +183,30 @@ function mortgageCeiling() {
   return article({
     slug: "four-and-a-half-times-income",
     title: "4.5x Your Income Is a Ceiling, Not a Budget",
-    description: `Borrow the full 4.5x and the mortgage takes 36% to 49% of your take-home pay before any stress test. The arithmetic at every income.`,
+    description: `Borrow the full 4.5x and the mortgage takes 36% to 49% of your take-home pay before a higher-rate illustration. The arithmetic at every income.`,
     eyebrow: "Mortgages",
     h1: "4.5&times; your income is a ceiling, <em>not a budget</em>",
-    standfirst: `Regulators cap most mortgage lending at 4.5 times income, so that is the number people are quoted and the number they plan around. Borrow all of it and the payment takes ${(lo * 100).toFixed(0)}% to ${(hi * 100).toFixed(0)}% of your take-home pay.`,
+    standfirst: `The Bank of England limits the share of new mortgages at or above 4.5 times income. That makes 4.5&times; a useful planning ceiling, but not a promise or a household budget. Borrow that amount and the payment takes ${(lo * 100).toFixed(0)}% to ${(hi * 100).toFixed(0)}% of estimated take-home pay.`,
+    dateModified: "2026-09-27",
     body: `
-  <p>The 4.5&times; figure comes from a financial stability rule: lenders may write no more than 15% of their new mortgages above 4.5 times income. It exists to stop the banking system taking on too much risk. It was never a statement about what an individual household can comfortably afford, and it is routinely read as one.</p>
+  <p>The 4.5&times; figure comes from a financial stability rule designed to keep mortgages at or above that multiple to no more than 15% of new lending in aggregate. Individual lenders and products vary. The rule protects the financial system; it does not say what an individual household can comfortably afford.</p>
 
   ${table(`Borrowing the full 4.5&times;, over 25 years at 4.5%`,
-    ["Income", "Borrowing", "Payment", "Of take-home", "Stressed"], rows)}
+    ["Income", "Borrowing", "Payment", "Of take-home", `At ${4.5 + STRESS_UPLIFT}%`], rows)}
 
   <h2>The pattern nobody mentions</h2>
   <p>The share <em>rises</em> with income. At ${money(30000)} the payment is ${(results[0].share * 100).toFixed(0)}% of take-home; at ${money(150000)} it is ${(results[4].share * 100).toFixed(0)}%. That is the opposite of the usual intuition that higher earners have more room.</p>
   <p>The reason is that the multiple is applied to gross income while the payment comes out of net. As income rises, a larger share of it is lost to tax, so the same multiple of gross is a larger multiple of what actually arrives. A £150,000 earner keeps a smaller proportion of their salary than a £30,000 earner, but is offered exactly 4.5 times the whole thing.</p>
 
-  <h2>The stress test</h2>
-  <p>Lenders do not test today's rate. They test one several points higher, so a remortgage in five years does not sink you. Apply the conventional three-point uplift and the payment reaches ${(results[4].stressedShare * 100).toFixed(0)}% of take-home at the top of the table. Lenders will usually decline before that point, which is why people are often offered less than the multiple implies and are surprised by it.</p>
+  <h2>A higher-rate illustration</h2>
+  <p>Lenders assess income, debts and regular spending, and many must consider likely interest-rate rises during the first five years. The FCA does not prescribe one uplift for every application, and an initial fixed rate lasting at least five years is generally exempt from that particular future-rate test. The final column is therefore a household planning scenario at ${4.5 + STRESS_UPLIFT}%, not a reproduction of lender underwriting. In that illustration, the payment reaches ${(results[4].stressedShare * 100).toFixed(0)}% of take-home at the top of the table.</p>
 
   <h2>A more useful number</h2>
   <p>If you want the payment under a third of your take-home, you are looking at roughly 3.5&times; income rather than 4.5&times;. That is not a rule, and plenty of households live comfortably above it &mdash; but it is the multiple that corresponds to the comfort level people <em>think</em> 4.5&times; represents.</p>
-  <p>Work out your own on the <a href="${BASE}/mortgage/">affordability calculator</a>, which shows the payment against your real take-home rather than your gross.</p>`,
+  <p>Work out your own on the <a href="${BASE}/mortgage/">affordability calculator</a>, which shows the payment against your estimated take-home rather than your gross.</p>
+
+  <h2>Sources</h2>
+  <p>Reviewed 27 September 2026 against the <a href="https://www.bankofengland.co.uk/financial-stability-report/2026/july-2026">Bank of England's July 2026 Financial Stability Report</a>, the <a href="https://www.fca.org.uk/firms/interest-rate-stress-test-rule">FCA interest-rate stress-test rule</a> and <a href="https://www.moneyhelper.org.uk/en/homes/buying-a-home/mortgage-affordability-calculator">MoneyHelper mortgage affordability guidance</a>.</p>`,
   });
 }
 

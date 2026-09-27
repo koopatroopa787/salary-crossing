@@ -120,7 +120,7 @@ function result(r) {
   <div>
     <dt>Verdict</dt>
     <dd id="m-verdict" style="font-size:17px" class="${r.verdict.level === "over" ? "warn" : ""}">${
-      { good: "Comfortable", tight: "Tight", over: "A stretch", none: "&mdash;" }[r.verdict.level]}</dd>
+      { good: "Lower pressure", tight: "Rate-sensitive", over: "High payment share", none: "&mdash;" }[r.verdict.level]}</dd>
     <small id="m-verdict-note">${r.verdict.text}</small>
   </div>
 </dl>`;
@@ -222,7 +222,7 @@ const num = (id, min = 0, max = 10000000, fallback = 0) => {
   const n = Number($(id).value);
   return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
 };
-const VERDICT = { good: "Comfortable", tight: "Tight", over: "A stretch", none: "\\u2014" };
+const VERDICT = { good: "Lower pressure", tight: "Rate-sensitive", over: "High payment share", none: "\\u2014" };
 
 function update() {
   const r = affordability({

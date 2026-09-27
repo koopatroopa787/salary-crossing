@@ -110,17 +110,14 @@ export function ltvBand(ltv) {
   return { label: "95%", note: "the dearest tier, and the smallest choice of lenders" };
 }
 
-/**
- * Thresholds are the conventional lender comfort zones, not a rule in any
- * handbook. Stated as such on the page rather than dressed up as a decision.
- */
+/** Planning labels based on payment share, not lender underwriting thresholds. */
 function verdict(share, stressedShare) {
   if (share === 0) return { level: "none", text: "Enter your income and deposit." };
   if (stressedShare <= 0.4) {
-    return { level: "good", text: "Comfortable. The payment stays under 40% of your take-home even at the stressed rate." };
+    return { level: "good", text: "The payment stays under 40% of estimated take-home in the higher-rate illustration." };
   }
   if (share <= 0.4) {
-    return { level: "tight", text: "Affordable now, but a rate rise would stretch you. Lenders will notice this too." };
+    return { level: "tight", text: "The current payment is under 40% of estimated take-home, but the higher-rate illustration exceeds it." };
   }
-  return { level: "over", text: "Over the level most lenders are comfortable with. Expect to be offered less than the multiple suggests." };
+  return { level: "over", text: "The current payment exceeds 40% of estimated take-home. Compare it carefully with your other spending and savings." };
 }

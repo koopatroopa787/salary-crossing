@@ -21,8 +21,12 @@ const usd = (n) => "$" + Math.round(n).toLocaleString("en-US");
 const pence = (net) => `${Math.round(net / 10)}p`;
 
 const PUBLISHED = "2026-09-05";
+const MORTGAGE_DATA_PATH = "/data/uk-mortgage-affordability-by-salary-2026-27.csv";
 
-const article = ({ slug, title, description, eyebrow, h1, standfirst, body, dateModified = PUBLISHED }) => ({
+const article = ({
+  slug, title, description, eyebrow, h1, standfirst, body,
+  dateModified = PUBLISHED, structuredData = [],
+}) => ({
   slug,
   title,
   description,
@@ -35,14 +39,16 @@ const article = ({ slug, title, description, eyebrow, h1, standfirst, body, date
     script: " ",
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "Article",
-      headline: h1.replace(/<[^>]+>/g, ""),
-      description,
-      datePublished: PUBLISHED,
-      dateModified,
-      isAccessibleForFree: true,
-      author: { "@type": "Organization", name: "Salary Crossing" },
-      publisher: { "@type": "Organization", name: "Salary Crossing" },
+      "@graph": [{
+        "@type": "Article",
+        headline: h1.replace(/<[^>]+>/g, ""),
+        description,
+        datePublished: PUBLISHED,
+        dateModified,
+        isAccessibleForFree: true,
+        author: { "@type": "Organization", name: "Salary Crossing" },
+        publisher: { "@type": "Organization", name: "Salary Crossing" },
+      }, ...structuredData],
     },
     body: `
 <p class="crumb"><a href="${BASE}/insights/">Analysis</a> / ${eyebrow}</p>
@@ -188,11 +194,28 @@ function mortgageCeiling() {
     h1: "4.5&times; your income is a ceiling, <em>not a budget</em>",
     standfirst: `The Bank of England limits the share of new mortgages at or above 4.5 times income. That makes 4.5&times; a useful planning ceiling, but not a promise or a household budget. Borrow that amount and the payment takes ${(lo * 100).toFixed(0)}% to ${(hi * 100).toFixed(0)}% of estimated take-home pay.`,
     dateModified: "2026-09-27",
+    structuredData: [{
+      "@type": "Dataset",
+      name: `UK mortgage affordability by salary, ${YEAR_LABEL}`,
+      description: "Calculated mortgage, monthly payment and take-home-pay share for UK salaries from £20,000 to £150,000 in £5,000 steps.",
+      url: url("/insights/four-and-a-half-times-income/"),
+      dateModified: "2026-09-27",
+      license: "https://creativecommons.org/licenses/by/4.0/",
+      creator: { "@id": url("/#organization") },
+      distribution: {
+        "@type": "DataDownload",
+        encodingFormat: "text/csv",
+        contentUrl: url(MORTGAGE_DATA_PATH),
+      },
+    }],
     body: `
   <p>The 4.5&times; figure comes from a financial stability rule designed to keep mortgages at or above that multiple to no more than 15% of new lending in aggregate. Individual lenders and products vary. The rule protects the financial system; it does not say what an individual household can comfortably afford.</p>
 
   ${table(`Borrowing the full 4.5&times;, over 25 years at 4.5%`,
     ["Income", "Borrowing", "Payment", "Of take-home", `At ${4.5 + STRESS_UPLIFT}%`], rows)}
+
+  <p class="route-cta"><a href="${BASE}${MORTGAGE_DATA_PATH}" download>Download the complete salary table as CSV &rarr;</a></p>
+  <p class="hint">The download covers £20,000 to £150,000 in £5,000 steps and is available under CC BY 4.0. Cite and link to this analysis when republishing it.</p>
 
   <h2>The pattern nobody mentions</h2>
   <p>The share <em>rises</em> with income. At ${money(30000)} the payment is ${(results[0].share * 100).toFixed(0)}% of take-home; at ${money(150000)} it is ${(results[4].share * 100).toFixed(0)}%. That is the opposite of the usual intuition that higher earners have more room.</p>
@@ -208,6 +231,38 @@ function mortgageCeiling() {
   <h2>Sources</h2>
   <p>Reviewed 27 September 2026 against the <a href="https://www.bankofengland.co.uk/financial-stability-report/2026/july-2026">Bank of England's July 2026 Financial Stability Report</a>, the <a href="https://www.fca.org.uk/firms/interest-rate-stress-test-rule">FCA interest-rate stress-test rule</a> and <a href="https://www.moneyhelper.org.uk/en/homes/buying-a-home/mortgage-affordability-calculator">MoneyHelper mortgage affordability guidance</a>.</p>`,
   });
+}
+
+export function mortgageDatasetCsv() {
+  const header = [
+    "gross_salary_gbp",
+    "mortgage_at_4_5x_gbp",
+    "monthly_payment_at_4_5_percent_gbp",
+    "estimated_monthly_take_home_gbp",
+    "payment_share_percent",
+    `monthly_payment_at_${4.5 + STRESS_UPLIFT}_percent_gbp`.replace(".", "_"),
+    "higher_rate_payment_share_percent",
+  ];
+  const rows = [];
+  for (let income = 20000; income <= 150000; income += 5000) {
+    const r = affordability({
+      income1: income,
+      deposit: 10_000_000,
+      rate: 4.5,
+      multiple: 4.5,
+      termYears: 25,
+    });
+    rows.push([
+      income,
+      Math.round(r.loan),
+      r.payment.toFixed(2),
+      r.netMonthly.toFixed(2),
+      (r.share * 100).toFixed(2),
+      r.stressed.toFixed(2),
+      (r.stressedShare * 100).toFixed(2),
+    ]);
+  }
+  return [header, ...rows].map((row) => row.join(",")).join("\n") + "\n";
 }
 
 /* ── 5. New York and Austin ─────────────────────────────────────────────── */

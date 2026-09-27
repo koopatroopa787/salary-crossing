@@ -25,7 +25,7 @@ const page = (title, description, path, body) =>
 export function aboutPage() {
   const jurisdictions = CODES.map((c) => {
     const m = country(c).meta;
-    return `<li><strong>${esc(m.name)}</strong> &mdash; ${m.sources.map((s) => `<a href="${s.url}" rel="nofollow">${esc(s.label)}</a>`).join(", ")}</li>`;
+    return `<li><strong>${esc(m.name)}</strong> &mdash; ${m.sources.map((s) => `<a href="${s.url}">${esc(s.label)}</a>`).join(", ")}</li>`;
   }).join("\n    ");
 
   return page(
@@ -61,6 +61,11 @@ export function aboutPage() {
   <h2>Who runs it</h2>
   <p>${SITE_NAME} is an independent project and the public calculators remain free, with no advertising or paid placement. A separate private <a href="/advisers/">adviser workspace</a> is being tested as a paid service for professional global-mobility work.</p>
   <p>You do not have to take the arithmetic on trust: every rate is sourced above, and if a figure looks wrong, say so at <a href="mailto:${CONTACT}">${CONTACT}</a> and the working will be shown.</p>
+
+  <h2>How calculations are checked and corrected</h2>
+  <p>Tax and payroll rules are encoded from primary government or tax-authority material. Each supported jurisdiction has automated checks against published examples, and the same calculation modules generate the public pages and run in the browser. A rate change is not published without its source and a matching calculation check.</p>
+  <p>Mortgage figures use standard capital-and-interest repayment arithmetic and state their assumptions on the page. They are planning illustrations rather than lender underwriting. Material pages carry their source links and review date; corrections are applied to the shared calculation or source text so every affected page changes together.</p>
+  <p>No page is presented as professionally reviewed unless a named reviewer has actually approved it. Errors and source updates can be reported to <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
 </article>`);
 }
 

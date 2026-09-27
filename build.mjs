@@ -13,7 +13,7 @@ import { homePage } from "./src/home_page.mjs";
 import { mortgagePage } from "./src/mortgage_page.mjs";
 import { comparePage, compareIndexPage } from "./src/compare_page.mjs";
 import { aboutPage, privacyPage, termsPage, notFoundPage } from "./src/legal_pages.mjs";
-import { insights, insightsIndexPage } from "./src/insights.mjs";
+import { insights, insightsIndexPage, mortgageDatasetCsv } from "./src/insights.mjs";
 import { embedPage, sharePage } from "./src/share_page.mjs";
 import { adviserPage } from "./src/adviser_page.mjs";
 import { buildAdviserResources } from "./src/adviser_resources.mjs";
@@ -150,6 +150,8 @@ async function main() {
 
   await mkdir(out("/mortgage"), { recursive: true });
   await writeFile(out("/mortgage/index.html"), mortgagePage());
+  await mkdir(out("/data"), { recursive: true });
+  await writeFile(out("/data/uk-mortgage-affordability-by-salary-2026-27.csv"), mortgageDatasetCsv());
 
   await writeFile(out("/404.html"), notFoundPage());
 

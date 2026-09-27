@@ -146,7 +146,7 @@ ${retirementBreakdown(c)}
 
   <h2>Where the numbers come from</h2>
   <ul>
-    ${[...a.sources, ...b.sources].map((s) => `<li><a href="${s.url}" rel="nofollow">${s.label}</a></li>`).join("\n    ")}
+    ${[...a.sources, ...b.sources].map((s) => `<li><a href="${s.url}">${s.label}</a></li>`).join("\n    ")}
   </ul>
   <p>Every figure on this page is computed from those published rates at build time, not copied from another calculator. If one looks wrong, tell us and we will show our working.</p>
 </article>`;

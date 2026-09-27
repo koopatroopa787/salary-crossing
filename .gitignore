@@ -5,3 +5,4 @@ stats-history.json
 var/
 growth/
 output/
+.firecrawl/

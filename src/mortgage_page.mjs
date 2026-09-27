@@ -169,6 +169,9 @@ export function mortgagePage() {
   <h2>What the deposit really buys</h2>
   <p>A deposit does two things. It caps how much you can borrow at 95% of the price, and it decides which rate tier you land in. Lenders price in bands &mdash; 95%, 90%, 85%, 75%, 60% &mdash; and the gap between them is real money over 25 years. Getting from a 90% to an 85% deposit is often worth more than a pay rise.</p>
 
+  <h2>Budgeting for repairs after you buy</h2>
+  <p>A survey can turn up a boiler, rewiring, windows or other work that sits outside the mortgage payment. If you already have a contractor's price, <a href="https://getfairprice.app/">GetFairPrice</a> &mdash; another independent tool from the same maker &mdash; compares the quote with an indicative market range and gives you questions to ask before accepting it.</p>
+
   <h2>Sources and methodology</h2>
   <p>This is an independent planning illustration, last reviewed on 27 September 2026. It applies the selected income multiple and deposit limit, calculates a standard capital-and-interest payment, then compares that payment with estimated UK take-home pay. A lender will use its own product rules, credit checks and affordability model.</p>
   <ul>

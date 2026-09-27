@@ -253,7 +253,7 @@ All tools are free. Questions and corrections: ${CONTACT}.
     + `\n</urlset>\n`);
 
   await writeFile(out("/robots.txt"),
-    `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}${BASE}/sitemap.xml\n`);
+    `User-agent: *\nAllow: /\nDisallow: /hit\nSitemap: ${ORIGIN}${BASE}/sitemap.xml\n`);
 
   console.log(`built ${urls.length} pages: ${salaries.length} salaries, ${compareUrls.length} comparisons`);
 }

@@ -3,9 +3,9 @@
  *
  * Two caps apply and the smaller one wins:
  *
- *   Income multiple — regulators cap lending at 4.5x income for all but 15% of
- *   a lender's new mortgages (BoE FPC loan-to-income flow limit), so 4.5x is
- *   the working ceiling for most borrowers even though some get 5x or 5.5x.
+ *   Income multiple — the Bank of England's flow limit restricts the share of
+ *   new mortgages at or above 4.5x income, so 4.5x is a useful working ceiling
+ *   rather than a promise about an individual application.
  *
  *   Loan to value — you cannot borrow more than 95% of the price, so a small
  *   deposit caps the purchase long before your salary does.
@@ -18,7 +18,7 @@ import { takeHome } from "./tax.mjs";
 
 export const DEFAULT_MULTIPLE = 4.5;
 export const MAX_LTV = 0.95;
-/** Lenders test you against a rate well above the one you're offered. */
+/** An illustrative household resilience scenario, not a prescribed lender test. */
 export const STRESS_UPLIFT = 3.0;
 
 const bounded = (value, min, max, fallback = min) => {

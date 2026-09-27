@@ -45,7 +45,7 @@ test("two earners keep more than one earner on the same household income", () =>
     "but two personal allowances and two NI bands mean more take-home");
 });
 
-test("the stress test is harsher than the offered rate", () => {
+test("the illustrative higher-rate payment exceeds the offered-rate payment", () => {
   const r = affordability({ income1: 50000, deposit: 100000, rate: 4.5 });
   assert.ok(r.stressed > r.payment);
   close(r.stressed, r.payment * (r.stressed / r.payment), "consistent");
@@ -70,9 +70,9 @@ test("verdict degrades as the payment eats the pay packet", () => {
 });
 
 test("borrowing the full 4.5x is never comfortable, at any income", () => {
-  // This is the finding the page exists to show. The regulatory ceiling is
+  // This is the finding the page exists to show. The 4.5x working ceiling is
   // not an affordability target: at 4.5x the payment takes ~43% of net pay
-  // before the stress test, at every salary from £25k to £150k.
+  // before the higher-rate illustration, at every salary from £25k to £150k.
   for (const income of [25000, 40000, 60000, 90000, 150000]) {
     const r = affordability({ income1: income, deposit: 10_000_000, rate: 4.5 });
     assert.equal(r.limitedBy, "income");

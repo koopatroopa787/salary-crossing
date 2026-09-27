@@ -105,7 +105,7 @@ function result(r) {
     <tr><th scope="row">Monthly payment</th><td class="num">${money(r.payment)}</td></tr>
     <tr><th scope="row">Your take-home pay</th><td class="num">${money(r.netMonthly)}</td></tr>
     <tr class="sub"><td>the payment is this much of it</td><td class="num">${(r.share * 100).toFixed(0)}%</td></tr>
-    <tr><th scope="row">If rates rose ${STRESS_UPLIFT} points</th><td class="num">${money(r.stressed)}</td></tr>
+    <tr><th scope="row">Illustration: rate ${STRESS_UPLIFT} points higher</th><td class="num">${money(r.stressed)}</td></tr>
     <tr class="sub"><td>which would be</td><td class="num">${(r.stressedShare * 100).toFixed(0)}% of take-home</td></tr>
   </tbody>
 </table>
@@ -154,20 +154,28 @@ export function mortgagePage() {
   ${requiredIncomeTable()}
 
   <h2>What percentage of salary should go on a mortgage?</h2>
-  <p>There is no universal safe percentage because the payment comes from take-home pay while lenders quote income multiples against gross pay. This calculator shows the payment as a share of net monthly income and also tests the payment at a rate ${STRESS_UPLIFT} percentage points higher. That makes two salaries with the same gross borrowing limit easier to compare honestly.</p>
+  <p>There is no universal safe percentage because the payment comes from take-home pay while lenders quote income multiples against gross pay. MoneyHelper says people commonly spend 28% to 35% of income on a mortgage, but also says there is no single percentage everyone should target. This calculator shows the payment as a share of net monthly income and adds an illustrative payment at a rate ${STRESS_UPLIFT} percentage points higher. That scenario is a household resilience check, not a prediction of the rate or amount a lender will use.</p>
 
   <h2>The multiple is a ceiling, not a target</h2>
-  <p>Regulators cap lending at <strong>4.5 times income</strong> for all but 15% of a lender's new mortgages, so most people are quoted a maximum of 4.5x and treat it as the budget. Run the numbers at that maximum and the monthly payment comes to <strong>36% of take-home pay at £30,000, rising to 49% at £150,000</strong>. It rises with income, because the multiple is applied to gross while the payment comes out of net. Push it through the stress test and it reaches two thirds.</p>
+  <p>The Bank of England's flow limit is designed to keep mortgages at or above <strong>4.5 times income</strong> to no more than 15% of new lending in aggregate. Individual lenders and products vary, but 4.5x remains a useful working ceiling. Run the numbers at that maximum and the monthly payment comes to <strong>36% of take-home pay at £30,000, rising to 49% at £150,000</strong>. It rises with income, because the multiple is applied to gross while the payment comes out of net. In this page's three-point-higher illustration, it reaches two thirds.</p>
   <p>That is not a coincidence, it is what the ceiling means: it is the point at which lending stops, not the point at which it is comfortable. If you want the payment under a third of your net pay, you are looking at roughly 3.5x, not 4.5x. The full arithmetic is in <a href="${BASE}/insights/four-and-a-half-times-income/">4.5&times; is a ceiling, not a budget</a>.</p>
 
   <h2>Why two salaries beat one</h2>
   <p>Two people earning £30,000 each and one person earning £60,000 will be offered the same mortgage &mdash; the multiple is applied to gross household income either way. But the couple takes home more, because they get two personal allowances and two goes at the basic-rate band. Same loan, more money to pay it with.</p>
 
-  <h2>The stress test</h2>
-  <p>Lenders do not check whether you can afford today's rate. They check a rate several points higher, so that a remortgage in five years does not sink you. This page uses ${STRESS_UPLIFT} percentage points above whatever rate you enter, which is the conventional margin. If the stressed figure is over 40% of your take-home, expect a lender to offer you less than the multiple suggests.</p>
+  <h2>How lenders test affordability</h2>
+  <p>Lenders assess income, debts and regular spending, and many must consider the effect of likely interest-rate rises during the first five years. The FCA does not prescribe one uplift for every application: lenders can design their own approach, and an initial fixed rate lasting at least five years is generally exempt from that particular future-rate test. This page therefore shows a simple <strong>rate plus ${STRESS_UPLIFT} percentage points</strong> scenario so you can see how your own monthly budget would respond. It does not reproduce any lender's underwriting model or predict a lending decision.</p>
 
   <h2>What the deposit really buys</h2>
   <p>A deposit does two things. It caps how much you can borrow at 95% of the price, and it decides which rate tier you land in. Lenders price in bands &mdash; 95%, 90%, 85%, 75%, 60% &mdash; and the gap between them is real money over 25 years. Getting from a 90% to an 85% deposit is often worth more than a pay rise.</p>
+
+  <h2>Sources and methodology</h2>
+  <p>This is an independent planning illustration, last reviewed on 27 September 2026. It applies the selected income multiple and deposit limit, calculates a standard capital-and-interest payment, then compares that payment with estimated UK take-home pay. A lender will use its own product rules, credit checks and affordability model.</p>
+  <ul>
+    <li><a href="https://www.moneyhelper.org.uk/en/homes/buying-a-home/mortgage-affordability-calculator">MoneyHelper mortgage affordability guidance</a> &mdash; income, spending, debts and the usual 4.5-times starting ceiling.</li>
+    <li><a href="https://www.fca.org.uk/firms/interest-rate-stress-test-rule">FCA interest-rate stress-test rule</a> &mdash; how lenders may assess likely future rate rises and when the rule does not apply.</li>
+    <li><a href="https://www.bankofengland.co.uk/financial-stability-report/2026/july-2026">Bank of England Financial Stability Report, July 2026</a> &mdash; the current high loan-to-income flow limit and market context.</li>
+  </ul>
 </article>`;
 
   return shell({
@@ -183,6 +191,7 @@ export function mortgagePage() {
         name: `UK Mortgage Calculator by Salary ${YEAR_LABEL}`,
         applicationCategory: "FinanceApplication",
         operatingSystem: "Any",
+        dateModified: "2026-09-27",
         offers: { "@type": "Offer", price: "0", priceCurrency: "GBP" },
       }, {
         "@type": "FAQPage",
@@ -230,7 +239,7 @@ function update() {
     \`<tr><th scope="row">Monthly payment</th><td class="num">\${money(r.payment)}</td></tr>
      <tr><th scope="row">Your take-home pay</th><td class="num">\${money(r.netMonthly)}</td></tr>
      <tr class="sub"><td>the payment is this much of it</td><td class="num">\${(r.share * 100).toFixed(0)}%</td></tr>
-     <tr><th scope="row">If rates rose \${STRESS_UPLIFT} points</th><td class="num">\${money(r.stressed)}</td></tr>
+     <tr><th scope="row">Illustration: rate \${STRESS_UPLIFT} points higher</th><td class="num">\${money(r.stressed)}</td></tr>
      <tr class="sub"><td>which would be</td><td class="num">\${(r.stressedShare * 100).toFixed(0)}% of take-home</td></tr>\`;
 
   $("m-limit").textContent = r.limitedBy === "income" ? "Your income" : "Your deposit";

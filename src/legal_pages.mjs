@@ -4,10 +4,8 @@
  * These describe what the site actually does, not what a template says a site
  * usually does. Two things are worth knowing before editing them:
  *
- * - Every calculation runs in the visitor's browser. No salary figure is ever
- *   sent to the server, and the privacy policy says so because it is true, not
- *   as a marketing line. If that ever stops being true, this file must change
- *   in the same commit.
+ * - Website calculations run in the browser. The optional public JSON API
+ *   receives query-string inputs; its privacy disclosure must stay accurate.
  * - Visits are counted by a first-party beacon (BEACON in render.mjs) with no
  *   cookie and no third party. There is no advertising yet. The policy states
  *   that plainly rather than pre-emptively describing cookies that do not exist.
@@ -17,7 +15,7 @@ import { CONTACT, SITE_NAME, url } from "./site.mjs";
 import { shell, esc } from "./render.mjs";
 import { country, CODES } from "./compare.mjs";
 
-const UPDATED = "23 September 2026";
+const UPDATED = "28 September 2026";
 
 const page = (title, description, path, body) =>
   shell({ title, description, canonical: url(path), body, script: " " });
@@ -72,19 +70,19 @@ export function aboutPage() {
 export function privacyPage() {
   return page(
     "Privacy",
-    `What the free Salary Crossing calculators collect. Calculator inputs stay in your browser; the separate adviser workspace has its own privacy notice.`,
+    `What Salary Crossing's browser calculators and optional public JSON API receive. The adviser workspace has its own privacy notice.`,
     "/privacy/",
     `
 <header class="masthead">
   <p class="eyebrow">Privacy &middot; updated ${UPDATED}</p>
-  <h1>Your salary never <em>leaves your device</em></h1>
-  <p class="standfirst">That is the whole policy for the free public calculators. The private adviser workspace has accounts, case data and a <a href="https://app.salarycrossing.com/privacy">separate privacy notice</a>.</p>
+  <h1>Browser calculator inputs <em>stay on your device</em></h1>
+  <p class="standfirst">The website calculators run locally. The optional public JSON API receives the values a caller sends to it. The private adviser workspace has a <a href="https://app.salarycrossing.com/privacy">separate privacy notice</a>.</p>
 </header>
 
 <article>
-  <h2>What you type is not collected, because it is never sent</h2>
-  <p>Every calculation on the public site runs inside your own browser. The salary you enter, the countries you pick and the results you see are computed on your device and stay there. They are not transmitted to the server, not written to a database, and not logged. The public calculators have no account or sign-in.</p>
-  <p>This is a structural fact, not a promise about how we behave: the pages are static files and the arithmetic ships to you as JavaScript. There is no server-side code that could receive a salary even if someone wanted it to.</p>
+  <h2>Website calculators and the optional API</h2>
+  <p>Calculations made through the website forms run inside your browser. The salary, countries and optional cost figures you enter there stay on your device. They are not submitted to the JSON API. The website calculators have no account or sign-in.</p>
+  <p>Developers and AI assistants can separately call our <a href="/developers/">public calculator API</a>. An API request sends its numeric inputs in the URL to our server. Those URL values may appear alongside an IP address in server and Cloudflare request logs. Do not put names, client details or other personal information in an API request. The API does not store calculator results in a case database. Server log lines are deleted after 14 days; Cloudflare handles its own request logs under its privacy policy below.</p>
 
   <h2>What is recorded automatically</h2>
   <p>Like any web server, ours records a line for each request: the IP address, the time, the page requested, the referring page and the browser's user-agent string. This is standard web-server logging, used to keep the site running and to spot abuse.</p>
@@ -103,7 +101,7 @@ export function privacyPage() {
   </ul>
 
   <h2>Your rights</h2>
-  <p>Under UK GDPR you may ask what personal data is held about you, ask for it to be corrected or erased, and complain to the <a href="https://ico.org.uk/" rel="nofollow">Information Commissioner's Office</a>. For the public calculators, the only personal data held is normally your IP address in a short-lived server log, with no account or profile attached.</p>
+  <p>Under UK GDPR you may ask what personal data is held about you, ask for it to be corrected or erased, and complain to the <a href="https://ico.org.uk/" rel="nofollow">Information Commissioner's Office</a>. For website calculator visitors, this is normally an IP address in a short-lived server log. API request logs can also contain the calculator inputs sent in the URL. Neither has an account or profile attached.</p>
   <p>Requests and questions: <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
 
   <h2>Changes</h2>
@@ -142,7 +140,7 @@ export function termsPage() {
   <p>Nothing in these terms limits liability for death or personal injury caused by negligence, for fraud, or for anything else that cannot lawfully be excluded.</p>
 
   <h2>Using the site</h2>
-  <p>You are welcome to use these figures for your own decisions and to link to any page. Please do not scrape the site at a rate that degrades it for others, or republish the calculations as your own work. The tax rates themselves are public information and belong to nobody.</p>
+  <p>You are welcome to use these figures for your own decisions, link to any page and call the free public API at a reasonable rate. Please do not scrape or call the site at a rate that degrades it for others, or republish the calculations as your own work. The tax rates themselves are public information and belong to nobody.</p>
 
   <h2>Governing law</h2>
   <p>These terms are governed by the law of England and Wales, and the courts of England and Wales have exclusive jurisdiction.</p>

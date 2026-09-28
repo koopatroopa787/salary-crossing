@@ -7,6 +7,7 @@ import { audit, createSession, currentSession, openDatabase } from "./db.mjs";
 import { extractCaseData } from "./llm.mjs";
 import { adviserPrivacyView, adviserTermsView, dataProcessingView, subprocessorsView } from "./legal_views.mjs";
 import { compensationReportPdf } from "./pdf.mjs";
+import { openApi, publicApiResult } from "./public_api.mjs";
 import { calculateReport, normalizeInputs } from "./report.mjs";
 import { findCase, listCaseDocuments } from "./repository.mjs";
 import { cleanEmail, cleanText, expiredSessionCookie, nowIso, parseCookies, passwordHash, passwordMatches, safeEqual, sessionCookie, sha256, signedValue } from "./security.mjs";
@@ -16,6 +17,7 @@ import { accountView, billingView, caseView, dashboardView, loginView, newCaseVi
 const APP_CSS = readFileSync(new URL("./app.css", import.meta.url));
 const FX_PATH = fileURLToPath(new URL("../fx-cache.json", import.meta.url));
 const loginAttempts = new Map();
+const publicApiAttempts = new Map();
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
 const config = configuration();
@@ -182,6 +184,27 @@ function loginAttempt(ip) {
 async function handler(req, res) {
   const url = new URL(req.url, config.origin);
   const method = req.method ?? "GET";
+  if (url.pathname.startsWith("/api/v1/")) {
+    const apiHeaders = { "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" };
+    if (method !== "GET") return send(res, 405, JSON.stringify({ error: "Only GET is supported." }), "application/json", { ...apiHeaders, Allow: "GET" });
+    if (url.pathname === "/api/v1/openapi.json") return send(res, 200, JSON.stringify(openApi), "application/json", apiHeaders);
+    const ip = String(req.headers["x-real-ip"] ?? req.socket.remoteAddress ?? "unknown");
+    const now = Date.now();
+    const recent = publicApiAttempts.get(ip);
+    const attempt = !recent || now - recent.startedAt > 60_000 ? { count: 0, startedAt: now } : recent;
+    if (publicApiAttempts.size > 10_000) publicApiAttempts.clear();
+    if (++attempt.count > 120) return send(res, 429, JSON.stringify({ error: "Please slow down and retry in a minute." }), "application/json", { ...apiHeaders, "Cache-Control": "no-store", "Retry-After": "60" });
+    publicApiAttempts.set(ip, attempt);
+    try {
+      const result = publicApiResult(url, fx());
+      if (!result) return send(res, 404, JSON.stringify({ error: "Unknown calculator." }), "application/json", { ...apiHeaders, "Cache-Control": "no-store" });
+      return send(res, 200, JSON.stringify(result), "application/json", apiHeaders);
+    } catch (error) {
+      const status = error.status === 400 ? 400 : 500;
+      if (status === 500) console.error(error);
+      return send(res, status, JSON.stringify({ error: status === 400 ? error.message : "The calculator could not complete that request." }), "application/json", { ...apiHeaders, "Cache-Control": "no-store" });
+    }
+  }
   if (method === "GET" && url.pathname === "/health") return send(res, 200, JSON.stringify({ ok: true, database: true, llm: Boolean(config.llmApiKey), billing: Boolean(config.stripeSecretKey && config.stripePilotPrice), documentUploads: config.documentUploadsEnabled }), "application/json");
   if (method === "GET" && url.pathname === "/assets/app.css") return send(res, 200, APP_CSS, "text/css; charset=utf-8", { "Cache-Control": "public, max-age=3600" });
   if (method === "GET" && url.pathname === "/privacy") return send(res, 200, adviserPrivacyView());

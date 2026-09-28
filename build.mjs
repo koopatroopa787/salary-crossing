@@ -16,6 +16,7 @@ import { aboutPage, privacyPage, termsPage, notFoundPage } from "./src/legal_pag
 import { insights, insightsIndexPage, mortgageDatasetCsv } from "./src/insights.mjs";
 import { embedPage, sharePage } from "./src/share_page.mjs";
 import { adviserPage } from "./src/adviser_page.mjs";
+import { developerPage } from "./src/developer_page.mjs";
 import { buildAdviserResources } from "./src/adviser_resources.mjs";
 import { CODES, country } from "./src/compare.mjs";
 import { fetchRates, rate as fxRate } from "./src/fx.mjs";
@@ -147,6 +148,8 @@ async function main() {
   await mkdir(out("/take-home"), { recursive: true });
   await writeFile(out("/take-home/index.html"), takeHomePage());
   await writeFile(out("/salaries/index.html"), indexPage(salaries));
+  await mkdir(out("/developers"), { recursive: true });
+  await writeFile(out("/developers/index.html"), developerPage());
 
   await mkdir(out("/mortgage"), { recursive: true });
   await writeFile(out("/mortgage/index.html"), mortgagePage());
@@ -192,6 +195,8 @@ async function main() {
 - [UK mortgage affordability](${ORIGIN}${BASE}/mortgage/): Estimate borrowing, property budget and payments against take-home pay.
 - [Country comparison directory](${ORIGIN}${BASE}/compare/): Browse every supported country and US-state pairing.
 - [Salary directory](${ORIGIN}${BASE}/salaries/): Browse UK after-tax calculations by gross annual salary.
+- [Public calculator API](${ORIGIN}${BASE}/developers/): Free, read-only JSON endpoints for take-home pay, cross-border salary and UK mortgage estimates, with sources and limitations.
+- [API description](https://app.salarycrossing.com/api/v1/openapi.json): Machine-readable routes and required inputs.
 
 ## Research and reuse
 
@@ -242,7 +247,7 @@ All tools are free. Questions and corrections: ${CONTACT}.
     [`/compare/${slug}/`, ...ladder.map((g) => `/compare/${slug}/${g}/`)]);
 
   const urls = [
-    "/", "/take-home/", "/mortgage/", "/compare/", ...compareUrls,
+    "/", "/take-home/", "/mortgage/", "/compare/", "/developers/", ...compareUrls,
     "/about/", "/privacy/", "/terms/", "/use-our-numbers/", "/advisers/", ...adviserResources.paths,
     "/insights/", ...articles.map((a) => `/insights/${a.slug}/`),
     "/salaries/", ...salaries.map((s) => `/salary/${s}/`),

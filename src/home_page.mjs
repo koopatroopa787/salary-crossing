@@ -116,9 +116,11 @@ ${costInputs("to", "AED")}
       </dl>
     </div>
     <div class="result-actions">
+      <button type="button" id="add-costs">Add rent &amp; living costs</button>
       <a class="answer-link" id="a-link" href="/compare/uk-to-ae/">See tax sources and other salaries &rarr;</a>
       <button type="button" id="copy-comparison">Copy comparison link</button>
     </div>
+    <p class="copy-status">A salary match is only the first step. Add your own costs to compare what is left each month.</p>
     <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
   </output>
 </section>
@@ -273,11 +275,29 @@ function update() {
   history.replaceState(null, "", comparisonHash({ from, to, gross, fromCosts, toCosts }));
 }
 
-$("cmp").addEventListener("input", update);
+let comparisonStartedTracked = false;
+let costsEnteredTracked = false;
+$("cmp").addEventListener("input", () => {
+  if (!comparisonStartedTracked) { comparisonStartedTracked = true; track("comparison-started"); }
+  update();
+  if (!costsEnteredTracked && monthlyCosts(readCosts("from")) + monthlyCosts(readCosts("to")) > 0) {
+    costsEnteredTracked = true;
+    track("costs-entered");
+  }
+});
 $("cmp").addEventListener("submit", (event) => event.preventDefault());
 let costOpenTracked = false;
-$("cost-layer").addEventListener("toggle", () => {
-  if ($("cost-layer").open && !costOpenTracked) { costOpenTracked = true; track("cost-layer-opened"); }
+function markCostOpen() {
+  if (!costOpenTracked) { costOpenTracked = true; track("cost-layer-opened"); }
+}
+$("cost-layer").querySelector("summary").addEventListener("click", () => {
+  if (!$("cost-layer").open) markCostOpen();
+});
+$("add-costs").addEventListener("click", () => {
+  $("cost-layer").open = true;
+  markCostOpen();
+  $("cost-layer").scrollIntoView({ behavior: "smooth", block: "start" });
+  $("from-housing")?.focus({ preventScroll: true });
 });
 $("copy-comparison").addEventListener("click", async () => {
   try {

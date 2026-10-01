@@ -15,7 +15,8 @@ import { CONTACT, SITE_NAME, url } from "./site.mjs";
 import { shell, esc } from "./render.mjs";
 import { country, CODES } from "./compare.mjs";
 
-const UPDATED = "28 September 2026";
+const PRIVACY_UPDATED = "1 October 2026";
+const TERMS_UPDATED = "28 September 2026";
 
 const page = (title, description, path, body) =>
   shell({ title, description, canonical: url(path), body, script: " " });
@@ -74,7 +75,7 @@ export function privacyPage() {
     "/privacy/",
     `
 <header class="masthead">
-  <p class="eyebrow">Privacy &middot; updated ${UPDATED}</p>
+  <p class="eyebrow">Privacy &middot; updated ${PRIVACY_UPDATED}</p>
   <h1>Browser calculator inputs <em>stay on your device</em></h1>
   <p class="standfirst">The website calculators run locally. The optional public JSON API receives the values a caller sends to it. The private adviser workspace has a <a href="https://app.salarycrossing.com/privacy">separate privacy notice</a>.</p>
 </header>
@@ -105,7 +106,7 @@ export function privacyPage() {
   <p>Requests and questions: <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
 
   <h2>Changes</h2>
-  <p>Material changes will be reflected in the date at the top of this page. This policy was last updated on ${UPDATED}.</p>
+  <p>Material changes will be reflected in the date at the top of this page. This policy was last updated on ${PRIVACY_UPDATED}.</p>
 </article>`);
 }
 
@@ -116,7 +117,7 @@ export function termsPage() {
     "/terms/",
     `
 <header class="masthead">
-  <p class="eyebrow">Terms and disclaimer &middot; updated ${UPDATED}</p>
+  <p class="eyebrow">Terms and disclaimer &middot; updated ${TERMS_UPDATED}</p>
   <h1>Estimates, <em>not advice</em></h1>
   <p class="standfirst">This site is free, provided as-is, and intended to inform a decision rather than make one.</p>
 </header>
@@ -144,7 +145,7 @@ export function termsPage() {
 
   <h2>Governing law</h2>
   <p>These terms are governed by the law of England and Wales, and the courts of England and Wales have exclusive jurisdiction.</p>
-  <p>Last updated ${UPDATED}. Tax year ${YEAR_LABEL} unless a page states otherwise.</p>
+  <p>Last updated ${TERMS_UPDATED}. Tax year ${YEAR_LABEL} unless a page states otherwise.</p>
 </article>`);
 }
 

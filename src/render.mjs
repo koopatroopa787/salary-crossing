@@ -26,7 +26,7 @@ const FONTS = "https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wgh
  * all. No cookie, nothing stored in the browser, no third party. Crawlers
  * mostly don't run scripts, which filters them for free.
  */
-export const BEACON = `<script>try{navigator.sendBeacon("/hit?p="+encodeURIComponent(location.pathname)+"&r="+encodeURIComponent(document.referrer))}catch(e){}</script>`;
+export const BEACON = `<script>try{navigator.sendBeacon("/hit?p="+encodeURIComponent(location.pathname)+"&r="+encodeURIComponent(document.referrer))}catch(e){}document.addEventListener("click",function(event){if(!location.pathname.startsWith("/advisers/"))return;const link=event.target?.closest?.('a[href^="mailto:hello@salarycrossing.com"]');if(!link)return;try{navigator.sendBeacon("/hit?p="+encodeURIComponent("/event/adviser-enquiry-link-clicked")+"&r="+encodeURIComponent(location.origin+location.pathname))}catch(e){}})</script>`;
 
 export function shell({ title, description, canonical, body, jsonLd, script }) {
   const pageNodes = jsonLd

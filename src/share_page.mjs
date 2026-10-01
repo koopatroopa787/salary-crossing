@@ -53,6 +53,9 @@ import { compare, country, fmt, CODES } from "${assets.js}/compare.mjs";
 import { embedOptions, presetHash } from "${assets.js}/embed_options.mjs";
 const RATES = ${JSON.stringify(rates)};
 const $ = (id) => document.getElementById(id);
+const track = (name) => { try { navigator.sendBeacon("/hit?p=" + encodeURIComponent("/event/" + name) + "&r=" + encodeURIComponent(location.origin + location.pathname)); } catch {} };
+const externalEmbed = window.top !== window.self && (!document.referrer || new URL(document.referrer).hostname !== location.hostname);
+if (externalEmbed) track("publisher-embed-loaded");
 function loadPreset() {
   // Keep existing query-string embeds working; new snippets use a fragment.
   const q = new URLSearchParams(location.hash.slice(1) || location.search);
@@ -74,7 +77,11 @@ function update() {
   $("a-link").href = "${ORIGIN}/" + presetHash({ from, to, gross });
   $("a-link").hidden = false;
 }
-$("cmp").addEventListener("input", update);
+let externalStartTracked = false;
+$("cmp").addEventListener("input", () => {
+  if (externalEmbed && !externalStartTracked) { externalStartTracked = true; track("publisher-embed-used"); }
+  update();
+});
 $("cmp").addEventListener("submit", (event) => event.preventDefault());
 window.addEventListener("hashchange", loadPreset);
 loadPreset();

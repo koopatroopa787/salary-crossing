@@ -86,10 +86,10 @@ export function privacyPage() {
 
   <h2>What is recorded automatically</h2>
   <p>Like any web server, ours records a line for each request: the IP address, the time, the page requested, the referring page and the browser's user-agent string. This is standard web-server logging, used to keep the site running and to spot abuse.</p>
-  <p>Each page also sends one small request back to our own server containing the address of the page and the site that linked you to it. The calculator records anonymous totals when somebody opens the cost section or copies a comparison or embed link. The salary, cost figures and URL fragment containing them are not included. Nothing is stored in your browser for this. Log lines, including IP addresses, are deleted after 14 days; what is kept after that is daily totals only: how many visits, product actions, pages, referring sites and countries.</p>
+  <p>Each page also sends one small request back to our own server containing the address of the page and the site that linked you to it. The calculator records anonymous totals when somebody starts a comparison, opens the cost section, enters any living-cost figure or copies a comparison or embed link. It also counts when a publisher's embedded calculator loads or is used, and when somebody clicks an adviser enquiry email link. These are actions, not confirmation that an email was sent. The salary, cost figures and URL fragment containing them are not included. Nothing is stored in your browser for this. Log lines, including IP addresses, are deleted after 14 days; what is kept after that is daily totals only: how many visits, product actions, pages, referring sites and countries.</p>
   <p>The server is an Oracle Cloud instance in the <strong>UK London</strong> region, so those logs stay in the United Kingdom.</p>
 
-  <h2>No cookies, no tracking</h2>
+  <h2>No cookies or third-party tracking</h2>
   <p>The public calculator site sets no cookies. There is no Google Analytics, no Meta pixel, no session tracking, no fingerprinting and no advertising at the time of writing. The adviser workspace uses a secure session cookie after sign-in, as described in its own notice.</p>
   <p>If advertising is ever added, it will involve third-party cookies and this page will be updated before it goes live, not after.</p>
 

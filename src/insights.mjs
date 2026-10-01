@@ -12,7 +12,9 @@
  */
 import { takeHome, money } from "./tax.mjs";
 import { affordability, STRESS_UPLIFT } from "./mortgage.mjs";
-import { country } from "./compare.mjs";
+import { country, compare, fmt } from "./compare.mjs";
+import { rate as fxRate } from "./fx.mjs";
+import { matchAfterCosts, comparisonHash } from "./living_costs.mjs";
 import { YEAR_LABEL } from "./rates.mjs";
 import { BASE, url } from "./site.mjs";
 import { shell } from "./render.mjs";
@@ -25,12 +27,12 @@ const MORTGAGE_DATA_PATH = "/data/uk-mortgage-affordability-by-salary-2026-27.cs
 
 const article = ({
   slug, title, description, eyebrow, h1, standfirst, body,
-  dateModified = PUBLISHED, structuredData = [],
+  datePublished = PUBLISHED, dateModified = datePublished, structuredData = [],
 }) => ({
   slug,
   title,
   description,
-  datePublished: PUBLISHED,
+  datePublished,
   h1: h1.replace(/<[^>]+>/g, ""),
   render: () => shell({
     title,
@@ -43,7 +45,7 @@ const article = ({
         "@type": "Article",
         headline: h1.replace(/<[^>]+>/g, ""),
         description,
-        datePublished: PUBLISHED,
+        datePublished,
         dateModified,
         isAccessibleForFree: true,
         author: { "@type": "Organization", name: "Salary Crossing" },
@@ -305,8 +307,62 @@ function newYorkAustin() {
   });
 }
 
-export function insights() {
-  return [raiseTrap(), scotlandCrossover(), twoEarners(), mortgageCeiling(), newYorkAustin()];
+/* ── 6. London to Dubai, with user-controlled costs ─────────────────────── */
+
+function londonDubai(fx) {
+  const gross = 75000;
+  const rate = fxRate(fx.perEur, "GBP", "AED");
+  const salaryOnly = compare({ gross, from: "UK", to: "AE", rate });
+  // These are deliberately round, fictional budgets, not city averages.
+  const ukCosts = { housing: 1800, transport: 250, other: 500 };
+  const dubaiCosts = { housing: 8000, healthcare: 500, transport: 1000, other: 2000 };
+  const dubaiWithSchool = { ...dubaiCosts, childcare: 3000 };
+  const afterCosts = matchAfterCosts({ gross, from: "UK", to: "AE", rate, fromCosts: ukCosts, toCosts: dubaiCosts });
+  const withSchool = matchAfterCosts({ gross, from: "UK", to: "AE", rate, fromCosts: ukCosts, toCosts: dubaiWithSchool });
+  const uk = country("UK").meta;
+  const ae = country("AE").meta;
+  const moneyAe = (amount) => fmt(amount, ae);
+  const costsLink = `${BASE}/${comparisonHash({ from: "UK", to: "AE", gross, fromCosts: ukCosts, toCosts: dubaiCosts })}`;
+
+  return article({
+    slug: "london-to-dubai-salary-after-living-costs",
+    title: `London to Dubai Salary Comparison: Tax and Living Costs (${YEAR_LABEL})`,
+    description: `What a £75,000 London salary needs in Dubai after tax, then after your own housing, healthcare and school costs. An adjustable example with sources and assumptions.`,
+    eyebrow: "London to Dubai",
+    h1: "Is a move from London to Dubai <em>worth it financially?</em>",
+    standfirst: `A £75,000 London salary leaves ${money(salaryOnly.from.net)} after UK income tax and National Insurance. Matching that spendable pay in Dubai takes about ${moneyAe(salaryOnly.to.gross)} at the ${fx.date} exchange rate. The answer changes when you add the costs you would actually pay in each city.`,
+    datePublished: "2026-10-01",
+    body: `
+  <p>Dubai's lack of personal income tax on expatriate employment is only one line of a relocation decision. An employer's health cover, housing allowance, school fees, pension or end-of-service benefit can matter just as much. The useful question is what remains after your own unavoidable costs, not which payslip has the lower tax.</p>
+
+  ${table("£75,000 in London: three different comparisons", ["Comparison", "Dubai gross needed", "What is included"], [
+    ["Spendable pay only", moneyAe(salaryOnly.to.gross), "UK tax and NI; no living costs"],
+    ["After illustrated essentials", moneyAe(afterCosts.gross), "Illustrative housing, transport, healthcare and other essentials"],
+    ["Essentials plus school fees", moneyAe(withSchool.gross), "The same illustrated budget plus AED 3,000 monthly schooling"],
+  ])}
+
+  <h2>What we entered in the illustration</h2>
+  <p>The London side uses <strong>£1,800 housing, £250 transport and £500 other essentials per month</strong>. The Dubai side uses <strong>AED 8,000 housing, AED 500 healthcare, AED 1,000 transport and AED 2,000 other essentials per month</strong>. The final row adds AED 3,000 a month for schooling. These are round <strong>hypothetical inputs, not measured city averages or a recommended budget</strong>. Replace every one with your own quotes and circumstances.</p>
+  <p>The London pay figure assumes one employee in England with a standard tax code, no student loan and no employee pension deduction. The Dubai calculation assumes an expatriate employee subject to the site's UAE model. It does not model dual tax residency, UK departure-year treatment, bonuses, equity, allowances or a partner's income.</p>
+
+  <h2>Why a benefit can change the answer</h2>
+  <p>If an employer pays a cost directly, remove that cost from the Dubai column before comparing. In this tax-free salary model, adding AED 3,000 of monthly school costs raises the required annual cash salary by ${moneyAe(withSchool.gross - afterCosts.gross)}. This is an illustration of how the calculation responds to an input; it is not a prediction of school fees. Pension and end-of-service benefits should be compared separately from money available for this month's bills.</p>
+
+  <p class="route-cta"><a href="${costsLink}">Adjust both budgets and see your own result &rarr;</a></p>
+
+  <h2>Check the offer before deciding</h2>
+  <ul>
+    <li>Get the basic salary, bonus conditions, allowances and employer-paid benefits in writing.</li>
+    <li>Compare actual housing options, medical cover and any school places or fees for your household.</li>
+    <li>Check which country will tax your pay during the move and whether your circumstances need specialist advice.</li>
+    <li>Recheck the result when the exchange rate or offer terms change.</li>
+  </ul>
+  <p>At the ${fx.date} build-time reference rate, £1 equals ${rate.toFixed(4)} AED. AED is derived through the USD peg because the <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html">ECB reference table</a> does not publish AED. Tax assumptions follow <a href="https://www.gov.uk/income-tax-rates">UK Income Tax</a>, <a href="https://www.gov.uk/national-insurance-rates-letters">National Insurance</a> and the <a href="https://u.ae/en/information-and-services/finance-and-investment/taxation/other-taxes/income-tax">UAE government's income-tax guidance</a>. This is a planning example, not tax or relocation advice.</p>`,
+  });
+}
+
+export function insights(fx) {
+  return [raiseTrap(), scotlandCrossover(), twoEarners(), mortgageCeiling(), newYorkAustin(), londonDubai(fx)];
 }
 
 export function insightsIndexPage(list) {

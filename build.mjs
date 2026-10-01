@@ -163,7 +163,7 @@ async function main() {
     await writeFile(out(`${path}/index.html`), render());
   }
 
-  const articles = insights();
+  const articles = insights(fx);
   await mkdir(out("/insights"), { recursive: true });
   await writeFile(out("/insights/index.html"), insightsIndexPage(articles));
   for (const a of articles) {
